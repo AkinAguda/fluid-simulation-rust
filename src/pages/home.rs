@@ -3,7 +3,7 @@ use percy_dom::*;
 use crate::components::*;
 
 use canvas::Canvas;
-use menu::config::Config;
+use menu::config::config_view::Config;
 
 pub struct Home {}
 

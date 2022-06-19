@@ -14,6 +14,7 @@ js-sys = "0.3"
 percy-dom = "0.7"
 app-world = "0.1.8"
 sunbeam = "0.0.4-alpha"
+num-traits = "0.2"
 
 [dependencies.web-sys]
 version = "0.3"

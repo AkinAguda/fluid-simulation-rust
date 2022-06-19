@@ -2,6 +2,8 @@
 
 mod components;
 mod pages;
+mod simulation;
+mod utility;
 
 use pages::home::Home;
 use wasm_bindgen::prelude::*;
