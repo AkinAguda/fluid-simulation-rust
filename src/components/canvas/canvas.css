@@ -1,0 +1,8 @@
+.canvas {
+  height: 100%;
+  width: 100%;
+  border: 1px solid var(--accent);
+  border-radius: 4px;
+  z-index: 1;
+  box-shadow: var(--box-shadow);
+}

@@ -5,6 +5,7 @@ pub struct Config {}
 
 impl View for Config {
     fn render(&self) -> VirtualNode {
+        let css = css_mod::get!("config.css");
         let ranges = vec![
             Range {
                 key: "dt",
@@ -41,7 +42,7 @@ impl View for Config {
         ];
 
         html! {
-            <div class="config-wrapper">
+            <div class=css["config-wrapper"]>
                 { ranges }
             </div>
         }

@@ -1,0 +1,78 @@
+:root {
+  --accent2: rgb(20, 15, 111);
+  --accent: rgb(92, 11, 92);
+  --pale-accent: rgba(0, 128, 0, 0.2);
+  --dark: black;
+  --gradient: linear-gradient(115deg, #e626bd, #6144ff 70%);
+  --box-shadow: 1px 10px 40px -13px rgba(73, 56, 198, 1);
+  --pale-light: rgba(255, 255, 255, 0.7);
+  --progress-height: 5px;
+}
+
+body,
+html {
+  padding: 0;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  background-color: var(--dark);
+  box-sizing: border-box;
+}
+
+html {
+  height: 100vh;
+}
+
+body {
+  margin: 0;
+  padding: 10px 10px;
+  box-sizing: border-box;
+  height: 100%;
+  width: 100%;
+}
+
+.wrapper {
+  height: 100vh;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 10px;
+  box-sizing: border-box;
+}
+
+.intro {
+  margin: 0 auto 20px auto;
+  color: white;
+  font-family: sans-serif;
+  text-align: center;
+  margin-top: 50px;
+  position: fixed;
+  top: 0px;
+  z-index: 2;
+}
+
+.intro > h1 {
+  font-size: 30px;
+  margin-bottom: 0px;
+}
+
+.intro > h2 {
+  font-size: 15px;
+  margin-top: 0px;
+  font-weight: normal;
+  margin-bottom: 5px;
+}
+
+.intro > h2 > a {
+  color: white;
+}
+
+.intro > a {
+  display: block;
+  color: white;
+  margin: 0;
+  margin-bottom: 20px;
+}

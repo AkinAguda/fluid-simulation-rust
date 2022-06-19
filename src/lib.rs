@@ -5,7 +5,7 @@ mod pages;
 mod simulation;
 mod utility;
 
-use pages::home::Home;
+use pages::home::home_view::Home;
 use wasm_bindgen::prelude::*;
 use web_sys;
 
@@ -20,6 +20,7 @@ struct App {
 impl App {
     #[wasm_bindgen(constructor)]
     pub fn new() -> App {
+        css_mod::init!();
         let start_view = html! { <div> Hello </div> };
 
         let window = web_sys::window().unwrap();
