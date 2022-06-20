@@ -42,7 +42,7 @@ impl View for Config {
         ];
 
         html! {
-            <div class=css["config-wrapper"]>
+            <div class=css["config-dropdown"]>
                 { ranges }
             </div>
         }

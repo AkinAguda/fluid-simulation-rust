@@ -1,10 +1,56 @@
-.config-wrapper {
-  position: fixed;
-  top: 30px;
-  right: 30px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-end;
-  z-index: 2;
-  max-height: 80vh;
+.config-dropdown::-webkit-scrollbar {
+  padding: 0 5px;
+  width: 8px;
+  height: 8px;
+}
+.config-dropdown::-webkit-scrollbar-track {
+  background-color: rgb(2, 2, 39);
+  padding: 5px;
+  border-radius: 5px;
+}
+
+.config-dropdown::-webkit-scrollbar-thumb {
+  background: var(--gradient);
+  border-radius: 5px;
+}
+.config-dropdown::-webkit-scrollbar-corner {
+  background-color: var(--pale-light);
+}
+
+.config-dropdown {
+  max-width: 300px;
+  width: 80vw;
+  border: 1px solid var(--accent);
+  border-radius: var(--progress-height);
+  overflow: hidden;
+  box-shadow: var(--box-shadow);
+  margin: 0;
+  padding: 35px 20px;
+  box-sizing: border-box;
+  background-color: var(--dark);
+  overflow-y: auto;
+}
+
+@media (min-width: 2080px) {
+  .config-dropdown {
+    max-width: 15vw;
+    width: 100vw;
+  }
+}
+
+.config-dropdown > li {
+  list-style-type: none;
+  margin-bottom: 30px;
+}
+
+.config-dropdown > li:last-child {
+  margin-bottom: 0;
+}
+
+.open {
+  animation: open 0.3s forwards;
+}
+
+.close {
+  animation: close 0.3s forwards;
 }

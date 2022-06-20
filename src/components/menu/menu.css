@@ -1,0 +1,10 @@
+.config-wrapper {
+  position: fixed;
+  top: 30px;
+  right: 30px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  z-index: 2;
+  max-height: 80vh;
+}

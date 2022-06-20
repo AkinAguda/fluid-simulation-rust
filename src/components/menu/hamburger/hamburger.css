@@ -1,0 +1,30 @@
+.config-trigger {
+  min-height: 50px;
+  min-width: 50px;
+  height: 50px;
+  width: 50px;
+  box-shadow: var(--box-shadow);
+  border-radius: 100%;
+  transition: 0.2s;
+  background-size: contain;
+  background: var(--gradient);
+  border: none;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  padding: 12px;
+  box-sizing: border-box;
+}
+
+.config-trigger > div {
+  height: 3px;
+  width: 100%;
+  background-color: rgb(242, 242, 242);
+  border-radius: 4px;
+}
+
+.config-trigger:hover {
+  cursor: pointer;
+  opacity: 0.8;
+}
