@@ -1,10 +1,14 @@
 use super::super::range::Range;
-use crate::simulation::simulation_constants as sim_c;
+use crate::{log, simulation::simulation_constants as sim_c, world::World};
+use app_world::AppWorldWrapper;
 use percy_dom::*;
-pub struct Config {}
+pub struct Config {
+    pub world: AppWorldWrapper<World>,
+}
 
 impl View for Config {
     fn render(&self) -> VirtualNode {
+        let world = self.world.read();
         let css = css_mod::get!("config.css");
         let ranges = vec![
             Range {
@@ -41,8 +45,17 @@ impl View for Config {
             },
         ];
 
+        let mut classes = vec![css["config-dropdown"]];
+
+        if world.state.config_open {
+            log("IS OPEN");
+            classes.push(css["open"])
+        } else {
+            log("IS CLOSED");
+            classes.push(css["close"])
+        }
         html! {
-            <div class=css["config-dropdown"]>
+            <div class=classes>
                 { ranges }
             </div>
         }
