@@ -18,6 +18,7 @@ pub type SimAppWorldWrapper = AppWorldWrapper<World>;
 
 pub enum Msg {
     ToggleConfig,
+    SetRenderFn(RenderFn),
     SetBtnTxt(String),
 }
 
@@ -47,6 +48,9 @@ impl AppWorld for World {
                 self.toggle_config();
             }
             Msg::SetBtnTxt(text) => self.state.set_btn_txt(text),
+            Msg::SetRenderFn(render_fn) => {
+                self.set_render_fn(render_fn);
+            }
         }
         (self.resources.render_fn)();
     }

@@ -22,17 +22,17 @@ use percy_dom::prelude::*;
 use crate::world::{SimAppWorldWrapper, World};
 use percy_dom::{render::create_render_scheduler, VElement, VirtualNode};
 
+#[derive(Clone)]
 pub struct SimApp {
     world: SimAppWorldWrapper,
 }
 
+#[wasm_bindgen]
 pub struct WebClient {
-    app: SimApp,
-    pdom: PercyDom,
 }
 
-#[wasm_bindgen]
-pub struct App;
+// #[wasm_bindgen]
+// pub struct App;
 
 #[wasm_bindgen]
 extern "C" {
@@ -62,13 +62,14 @@ fn create_dom_updater() -> PercyDom {
     pdom
 }
 
-fn render_app_with_world(app: &'static SimApp) -> VirtualNode {
+fn render_app_with_world(app: &SimApp) -> VirtualNode {
     // render_home(app.world)
+    let app_2 = app.clone();
     Home {
-        msg_say_hello: Rc::new(|text: String| {
-            app.world.msg(Msg::SetBtnTxt(text));
+        msg_say_hello: Rc::new(move |text: String| {
+            app_2.world.msg(Msg::SetBtnTxt(text));
         }),
-        button_text: app.world.read().state.btn_txt,
+        button_text: app.world.read().state.btn_txt.clone(),
     }
     .render()
 }
@@ -79,31 +80,44 @@ fn create_app(render: RenderFn) -> SimApp {
     }
 }
 
+#[wasm_bindgen]
 impl WebClient {
+    #[wasm_bindgen(constructor)]
     pub fn new() -> WebClient {
+        console_error_panic_hook::set_once();
+        css_mod::init!();
         let render = Box::new(|| {});
         let app: SimApp = create_app(render);
+        let app2 = app.clone();
         let mut pdom = create_dom_updater();
         pdom.update(render_app_with_world(&app));
-        WebClient { app, pdom }
+
+        let render = move || render_app_with_world(&app);
+
+        let render = create_render_scheduler(pdom, render);
+
+        app2.world.msg(Msg::SetRenderFn(render));
+
+        // app.world.
+    
+        WebClient {}
     }
 
-    pub fn start(mut self) {
-        let render = move || render_app_with_world(&self.app);
-        let render = create_render_scheduler(self.pdom, render);
-        // self.app = create_app(render);
-    }
-}
-
-#[wasm_bindgen]
-impl App {
-    #[wasm_bindgen(constructor)]
-    pub fn new() -> App {
-        css_mod::init!();
-
-        let client = WebClient::new();
-        client.start();
-
-        App
+    pub fn start(&self) {
+            // self.app = create_app(render);
     }
 }
+
+
+// impl App {
+//     #[wasm_bindgen(constructor)]
+//     pub fn new() -> App {
+//         css_mod::init!();
+
+//         let client = WebClient::new();
+
+//         client.start();
+
+//         App
+//     }
+// }

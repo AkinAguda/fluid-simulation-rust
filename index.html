@@ -1,25 +1,28 @@
 <!-- contents of index.html -->
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta http-equiv="X-UA-Compatible" content="IE=edge">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <meta name="description" content="Fluid simulation with navier stokes">
-        <meta name="keywords" content="Fluid Simulation, Navier Stokes, Rust, WebGL, Percy, Web Assembly, Akin Aguda">
-        <link rel="stylesheet" type="text/css" href="app.css"/>
-        <title>Fluid SImulation</title>
-    </head>
-    <body style='margin: 0; padding: 0; width: 100%; height: 100%;'>
-        <script type="module">
-            import init, {App} from '/fluid_simulation_rust.js'
-        
-            async function run ()  {
-                await init('/fluid_simulation_rust_bg.wasm')
-                new App()
-            }
-        
-            run()
-        </script>
-    </body>
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content="Fluid simulation with navier stokes" />
+    <meta
+      name="keywords"
+      content="Fluid Simulation, Navier Stokes, Rust, WebGL, Percy, Web Assembly, Akin Aguda"
+    />
+    <link rel="stylesheet" type="text/css" href="app.css" />
+    <title>Fluid SImulation</title>
+  </head>
+  <body style="margin: 0; padding: 0; width: 100%; height: 100%">
+    <script type="module">
+      import init, { WebClient } from "/fluid_simulation_rust.js";
+
+      async function run() {
+        await init("/fluid_simulation_rust_bg.wasm");
+        new WebClient();
+      }
+
+      run();
+    </script>
+  </body>
 </html>
