@@ -10,16 +10,11 @@ pub struct World {
     resources: Resources,
 }
 
-pub struct WorldConfig {
-    pub render_fn: RenderFn,
-}
-
 pub type SimAppWorldWrapper = AppWorldWrapper<World>;
 
 pub enum Msg {
     ToggleConfig,
     SetRenderFn(RenderFn),
-    SetBtnTxt(String),
 }
 
 impl World {
@@ -33,8 +28,7 @@ impl World {
         self.resources.set_render_fn(render_fn);
     }
     pub fn toggle_config(&mut self) {
-        // world_wrapper.read().state.config_open
-        self.state.set_config_open(false);
+        self.state.set_config_open(!self.state.config_open);
     }
 }
 
@@ -44,23 +38,13 @@ impl AppWorld for World {
     fn msg(&mut self, message: Self::Message) {
         match message {
             Msg::ToggleConfig => {
-                log("IN APP reducer");
                 self.toggle_config();
             }
-            Msg::SetBtnTxt(text) => self.state.set_btn_txt(text),
+
             Msg::SetRenderFn(render_fn) => {
                 self.set_render_fn(render_fn);
             }
         }
         (self.resources.render_fn)();
-    }
-}
-
-pub(crate) fn create_world(config: WorldConfig) -> World {
-    World {
-        state: SimAppState::new(),
-        resources: Resources {
-            render_fn: config.render_fn,
-        },
     }
 }
