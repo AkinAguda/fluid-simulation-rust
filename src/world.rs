@@ -4,7 +4,6 @@ use crate::{
 };
 use app_world::{AppWorld, AppWorldWrapper};
 
-use crate::log;
 pub struct World {
     pub state: SimAppState,
     resources: Resources,
