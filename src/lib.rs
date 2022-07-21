@@ -26,8 +26,7 @@ pub struct SimApp {
 }
 
 #[wasm_bindgen]
-pub struct WebClient {
-}
+pub struct WebClient {}
 
 // #[wasm_bindgen]
 // pub struct App;
@@ -56,7 +55,9 @@ fn create_dom_updater() -> PercyDom {
 
 fn render_app_with_world(app: &SimApp) -> VirtualNode {
     let app_2 = app.clone();
-    Home {}
+    Home {
+        world: app_2.world.clone(),
+    }
     .render()
 }
 
@@ -88,5 +89,4 @@ impl WebClient {
 
         WebClient {}
     }
-
 }

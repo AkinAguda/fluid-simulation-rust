@@ -1,13 +1,19 @@
-use app_world::AppWorldWrapper;
+use std::rc::Rc;
+
 use percy_dom::*;
 
-use crate::world::World;
+use crate::components::menu::config;
 
-use super::{hamburger::hamburger_view::render_hamburger, *};
+use super::hamburger::hamburger_view::Hamburger;
 use config::config_view::Config;
 
+pub struct MenuData {
+    pub toggle_config: Rc<dyn Fn() -> ()>,
+    pub open: bool,
+}
+
 pub struct Menu {
-    pub world: AppWorldWrapper<World>,
+    pub data: MenuData,
 }
 
 impl View for Menu {
@@ -16,9 +22,9 @@ impl View for Menu {
         html! {
             <div class=css["config-wrapper"]>
 
-                // <Hamburger world={self.world} />
-                // {render_hamburger(self.world)}
-                // <Config world={self.world} />
+                <Hamburger toggle_config={self.data.toggle_config.clone()} />
+
+                <Config open={self.data.open} />
             </div>
         }
     }

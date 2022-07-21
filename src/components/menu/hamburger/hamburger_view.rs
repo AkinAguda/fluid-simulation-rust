@@ -1,48 +1,25 @@
-use crate::{
-    log,
-    world::{Msg, SimAppWorldWrapper, World},
-};
-use app_world::AppWorldWrapper;
 use percy_dom::*;
+use std::rc::Rc;
 
-// pub struct Hamburger {
-//     pub world: AppWorldWrapper<World>,
-// }
+pub struct Hamburger {
+    pub toggle_config: Rc<dyn Fn() -> ()>,
+}
 
-// fn toggle_hamburger(world: SimAppWorldWrapper) {
-//     world.msg(Msg::ToggleConfig);
-// }
-
-// impl View for Hamburger {
-//     fn render(&self) -> VirtualNode {
-//         let css = css_mod::get!("hamburger.css");
-//         html! {
-//             <button
-//                 class=css["config-trigger"]
-//                 on_click=move|| {
-//                 self.world.msg(Msg::ToggleConfig);
-//             }>
-//                 <div />
-//                 <div />
-//                 <div />
-//             </button>
-//         }
-//     }
-// }
-
-pub fn render_hamburger(wrap: SimAppWorldWrapper) -> VirtualNode {
-    let css = css_mod::get!("hamburger.css");
-    html! {
-        <button
-            class=css["config-trigger"]
-            onclick= move|| {
-                log("LOGGED IN HAMBURGER CALLBACK");
-                wrap.msg(Msg::ToggleConfig);
-            }
-        >
-            <div />
-            <div />
-            <div />
-        </button>
+impl View for Hamburger {
+    fn render(&self) -> VirtualNode {
+        let css = css_mod::get!("hamburger.css");
+        let toggle_config = self.toggle_config.clone();
+        html! {
+            <button
+                class=css["config-trigger"]
+                onclick=move || {
+                    (toggle_config)()
+                }
+            >
+                <div />
+                <div />
+                <div />
+            </button>
+        }
     }
 }
