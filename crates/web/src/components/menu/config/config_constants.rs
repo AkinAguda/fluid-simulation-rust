@@ -1,4 +1,4 @@
-use super::super::range::Range;
+use super::super::range::range_view::Range;
 use crate::constants as sim_c;
 
 // TODO - Use when percy supports renderring arrays

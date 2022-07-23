@@ -1,0 +1,90 @@
+.title {
+  color: var(--pale-light);
+  font-size: 16px;
+  font-family: sans-serif;
+  letter-spacing: 1px;
+}
+
+.controllers {
+  display: flex;
+  align-items: center;
+  height: 20px;
+}
+
+.value-box {
+  width: 50px;
+  height: 30px;
+  border: none;
+  background-color: transparent;
+  color: var(--pale-light);
+  border-bottom: 2px solid var(--accent1);
+  font-size: 16px;
+  font-weight: bold;
+  padding: 0;
+  margin-top: 5px;
+}
+
+.meter {
+  width: 100%;
+  position: relative;
+  margin-right: 25px;
+}
+
+.range {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: var(--progress-height);
+  -webkit-appearance: none;
+  width: 100%;
+  background: transparent;
+  z-index: 3;
+}
+
+.range::-webkit-slider-thumb {
+  -webkit-appearance: none;
+  height: 10px;
+  width: 12px;
+  box-shadow: var(--box-shadow);
+  border-radius: 30px;
+  transition: 0.5s;
+  background-size: contain;
+  background: rgb(255, 255, 255);
+  border: none;
+  cursor: pointer;
+}
+
+.range:focus {
+  outline: none;
+}
+
+.range::-ms-track {
+  width: 100%;
+  cursor: pointer;
+  border-color: transparent;
+  color: transparent;
+}
+
+.progress {
+  background-image: var(--gradient);
+  width: 50%;
+  height: var(--progress-height);
+  border-radius: 30px;
+  position: absolute;
+  left: 0;
+  z-index: 2;
+  top: 2.5px;
+  width: 25%;
+}
+
+.track {
+  position: absolute;
+  z-index: 1;
+  left: 0;
+  top: 0;
+  width: 100%;
+  background-color: rgb(19, 4, 36);
+  height: var(--progress-height);
+  border-radius: 30px;
+  top: 2.5px;
+}

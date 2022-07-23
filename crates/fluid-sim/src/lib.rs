@@ -34,14 +34,12 @@ extern "C" {
     fn log_many(a: &str, b: &str);
 }
 
-#[wasm_bindgen]
 pub struct FluidConfig {
     nw: u16,
     nh: u16,
     diffusion: f32,
 }
 
-#[wasm_bindgen]
 impl FluidConfig {
     pub fn new(nw: u16, nh: u16, diffusion: f32) -> FluidConfig {
         FluidConfig { nw, nh, diffusion }
@@ -56,7 +54,6 @@ impl FluidConfig {
     }
 }
 
-#[wasm_bindgen]
 pub struct Fluid {
     config: FluidConfig,
     dt: f32,
@@ -75,7 +72,6 @@ pub struct Fluid {
     size: u16,
 }
 
-#[wasm_bindgen]
 impl Fluid {
     pub fn new(config: FluidConfig, dt: f32) -> Fluid {
         set_panic_hook();

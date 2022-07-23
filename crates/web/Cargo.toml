@@ -16,6 +16,7 @@ app-world = "0.2.0"
 num-traits = "0.2"
 css_mod = "0.1.5"
 console_error_panic_hook = "0.1.7"
+fluid-sim = { path = "../fluid-sim" }
 
 [build-dependencies]
 css_mod = "0.1.5"

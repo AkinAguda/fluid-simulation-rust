@@ -1,4 +1,4 @@
-use super::super::range::Range;
+use super::super::range::range_view::Range;
 use crate::{log, constants as sim_c};
 use percy_dom::*;
 pub struct Config {
@@ -43,19 +43,19 @@ impl View for Config {
             },
         ];
 
-        let mut classes = vec![css["config-dropdown"]];
+        let mut config_class = vec![css["config-dropdown"]];
 
         if self.open {
             log("IS OPEN");
-            classes.push(css["open"])
+            config_class.push(css["open"])
         } else {
             log("IS CLOSED");
-            classes.push(css["close"])
+            config_class.push(css["close"])
         }
         html! {
-            <div class=classes>
+            <ul class=config_class>
                 { ranges }
-            </div>
+            </ul>
         }
     }
 }
