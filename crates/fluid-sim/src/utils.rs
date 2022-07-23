@@ -1,5 +1,4 @@
 use std::cmp;
-use wasm_bindgen::prelude::*;
 
 pub fn set_panic_hook() {
     // When the `console_error_panic_hook` feature is enabled, we can call the
@@ -29,7 +28,6 @@ pub fn lerp(a: f32, b: f32, k: f32) -> f32 {
     a + (k * (b - a))
 }
 
-#[wasm_bindgen]
 pub fn pure_ix_fn(x: u16, y: u16, nw: u16, nh: u16) -> usize {
     let mut new_x = cmp::min(x, nw + 1);
     new_x = cmp::max(0, new_x);

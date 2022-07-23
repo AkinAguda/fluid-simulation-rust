@@ -4,35 +4,12 @@ mod utils;
 use constants::GAUSS_SEIDEL_ITERATIONS;
 use std::cmp;
 use utils::{lerp, pure_ix_fn, set_panic_hook, BoundaryType, PropertyType};
-use wasm_bindgen::prelude::*;
 
 // When the `wee_alloc` feature is enabled, use `wee_alloc` as the global
 // allocator.
 #[cfg(feature = "wee_alloc")]
 #[global_allocator]
 static ALLOC: wee_alloc::WeeAlloc = wee_alloc::WeeAlloc::INIT;
-
-#[wasm_bindgen]
-extern "C" {
-    // Use `js_namespace` here to bind `console.log(..)` instead of just
-    // `log(..)`
-    #[wasm_bindgen(js_namespace = console)]
-    fn log(s: &str);
-
-    // The `console.log` is quite polymorphic, so we can bind it with multiple
-    // signatures. Note that we need to use `js_name` to ensure we always call
-    // `log` in JS.
-    #[wasm_bindgen(js_namespace = console, js_name = log)]
-    fn log_f32(a: f32, b: &str);
-
-    // log usize and what it represents
-    #[wasm_bindgen(js_namespace = console, js_name = log)]
-    fn log_usize(a: usize, b: &str);
-
-    // Multiple arguments too!
-    #[wasm_bindgen(js_namespace = console, js_name = log)]
-    fn log_many(a: &str, b: &str);
-}
 
 pub struct FluidConfig {
     nw: u16,
