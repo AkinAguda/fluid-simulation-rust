@@ -1,5 +1,5 @@
 use super::super::range::Range;
-use crate::simulation::simulation_constants as sim_c;
+use crate::constants as sim_c;
 
 // TODO - Use when percy supports renderring arrays
 pub const DEFAULT_INPUTS: [Range; 4] = [

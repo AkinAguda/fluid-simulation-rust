@@ -1,5 +1,5 @@
 use super::super::range::Range;
-use crate::{log, simulation::simulation_constants as sim_c};
+use crate::{log, constants as sim_c};
 use percy_dom::*;
 pub struct Config {
     pub open: bool,
