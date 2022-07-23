@@ -16,16 +16,15 @@ impl<'a> View for Range<'a> {
             <li>
                 <div>
                     <div class=css["title"]>{self.title}</div>
+                    
                     <div class=css["controllers"]>
                         <div class=css["meter"]>
-                            <input type="range" max="2" min="0" class=css["range"]/>
+                            <input type="range" max=self.max min=self.min class=css["range"]/>
+                            <div class=css["progress"]></div>
+                            <div class=css["track"]></div>
                         </div>
 
                         <input type="number" step=self.step class=css["value-box"] />
-
-                        <div class=css["progress"]></div>
-
-                        <div class=css["track"]></div>
                     </div>
                 </div>
             </li>

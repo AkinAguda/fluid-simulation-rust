@@ -55,6 +55,12 @@ impl View for Config {
         html! {
             <ul class=config_class>
                 { ranges }
+                <li>
+                    <button class=css["config-button"]>Clear</button>
+                </li>
+                <li>
+                    <button class=css["config-button"]>Reset</button>
+                </li>
             </ul>
         }
     }

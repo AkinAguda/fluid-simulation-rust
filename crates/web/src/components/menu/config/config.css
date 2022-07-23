@@ -17,6 +17,18 @@
   background-color: var(--pale-light);
 }
 
+.config-button {
+  background: var(--gradient);
+  height: 40px;
+  padding: 0 30px;
+  border-radius: 40px;
+  width: 100%;
+  color: white;
+  border: none;
+  font-size: 16px;
+  cursor: pointer;
+}
+
 .config-dropdown {
   max-width: 300px;
   width: 80vw;
