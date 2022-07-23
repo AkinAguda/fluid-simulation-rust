@@ -1,6 +1,6 @@
 use crate::{
     resources::{RenderFn, Resources},
-    state::SimAppState, log,
+    state::SimAppState,
 };
 use app_world::{AppWorld, AppWorldWrapper};
 

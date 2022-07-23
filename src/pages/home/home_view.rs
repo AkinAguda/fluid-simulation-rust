@@ -1,6 +1,4 @@
 use std::rc::Rc;
-
-use app_world::AppWorldWrapper;
 use percy_dom::*;
 
 use crate::{
