@@ -1,8 +1,17 @@
 use super::super::range::range_view::Range;
 use crate::{log, constants as sim_c};
 use percy_dom::*;
-pub struct Config {
+
+pub struct ConfigComponentData {
     pub open: bool,
+    pub velocity: f32,
+    pub time_step: f32,
+    pub density: f32,
+    pub diffusion: f32
+}
+
+pub struct Config {
+    pub data: ConfigComponentData
 }
 
 impl View for Config {
@@ -12,7 +21,7 @@ impl View for Config {
             Range {
                 key: "dt",
                 title: "Time Step",
-                value: sim_c::DEFAULT_TIME_STEP,
+                value: self.data.time_step,
                 min: sim_c::DEFAULT_MIN_TIME_STEP,
                 max: sim_c::DEFAULT_MAX_TIME_STEP,
                 step: sim_c::DEFAULT_TIME_STEP_STEP,
@@ -20,7 +29,7 @@ impl View for Config {
             Range {
                 key: "added_d",
                 title: "Added Density",
-                value: sim_c::DEFAULT_ADDED_DENSITY,
+                value: self.data.density,
                 min: sim_c::DEFAULT_ADDED_DENSITY_MIN,
                 max: sim_c::DEFAULT_ADDED_DENSITY_MAX,
                 step: sim_c::DEFAULT_ADDED_DENSITY_STEP,
@@ -28,7 +37,7 @@ impl View for Config {
             Range {
                 key: "added_v",
                 title: "Added Velocity",
-                value: sim_c::DEFAULT_ADDED_VELOCITY,
+                value: self.data.velocity,
                 min: sim_c::DEFAULT_ADDED_VELOCITY_MIN,
                 max: sim_c::DEFAULT_ADDED_VELOCITY_MAX,
                 step: sim_c::DEFAULT_ADDED_VELOCITY_STEP,
@@ -36,7 +45,7 @@ impl View for Config {
             Range {
                 key: "diff",
                 title: "Diffusion",
-                value: sim_c::DEFAULT_DIFFUSION,
+                value: self.data.diffusion,
                 min: sim_c::DEFAULT_MIN_DIFFUSION,
                 max: sim_c::DEFAULT_MAX_DIFFUSION,
                 step: sim_c::DEFAULT_DIFFUSION_STEP,
@@ -45,11 +54,9 @@ impl View for Config {
 
         let mut config_class = vec![css["config-dropdown"]];
 
-        if self.open {
-            log("IS OPEN");
+        if self.data.open {
             config_class.push(css["open"])
         } else {
-            log("IS CLOSED");
             config_class.push(css["close"])
         }
         html! {

@@ -17,6 +17,7 @@ pub struct Home {
 impl View for Home {
     fn render(&self) -> VirtualNode {
         let world = self.world.clone();
+        let world2 = self.world.clone();
         let open = world.read().state.config_open.clone();
         let css = css_mod::get!("home.css");
 
@@ -32,7 +33,8 @@ impl View for Home {
             <Menu data={
                 MenuData {
                     toggle_config,
-                    open: open
+                    open: open,
+                    config_data: &world2.read().state.config_data
                 }
             } />
             <Canvas />

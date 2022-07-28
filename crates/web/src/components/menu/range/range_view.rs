@@ -19,12 +19,12 @@ impl<'a> View for Range<'a> {
                     
                     <div class=css["controllers"]>
                         <div class=css["meter"]>
-                            <input type="range" max=self.max min=self.min class=css["range"]/>
+                            <input type="range" step=self.step max=self.max min=self.min class=css["range"]/>
                             <div class=css["progress"]></div>
                             <div class=css["track"]></div>
                         </div>
 
-                        <input type="number" step=self.step class=css["value-box"] />
+                        <input type="number" step=self.step class=css["value-box"] value=self.value />
                     </div>
                 </div>
             </li>

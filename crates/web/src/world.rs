@@ -14,6 +14,10 @@ pub type SimAppWorldWrapper = AppWorldWrapper<World>;
 pub enum Msg {
     ToggleConfig,
     SetRenderFn(RenderFn),
+    SetDiffusion(f32),
+    SetTimeStep(f32),
+    SetDensity(f32),
+    SetVelocity(f32),
 }
 
 impl World {
@@ -42,6 +46,22 @@ impl AppWorld for World {
 
             Msg::SetRenderFn(render_fn) => {
                 self.set_render_fn(render_fn);
+            }
+
+            Msg::SetDiffusion(value) => {
+                self.state.config_data.diffusion = value;
+            }
+
+            Msg::SetTimeStep(value) => {
+                self.state.config_data.time_step = value;
+            }
+
+            Msg::SetDensity(value) => {
+                self.state.config_data.density = value;
+            }
+
+            Msg::SetVelocity(value) => {
+                self.state.config_data.velocity = value
             }
         }
         (self.resources.render_fn)();
