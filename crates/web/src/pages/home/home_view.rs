@@ -3,7 +3,7 @@ use percy_dom::*;
 
 use crate::{
     components::{menu::menu_view::MenuData, *},
-    world::SimAppWorldWrapper,
+    world::SimAppWorldWrapper, utility::enums::FluidProperty,
 };
 
 use crate::world::Msg;
@@ -18,10 +18,12 @@ impl View for Home {
     fn render(&self) -> VirtualNode {
         let world = self.world.clone();
         let world2 = self.world.clone();
+        let world3 = self.world.clone();
         let open = world.read().state.config_open.clone();
         let css = css_mod::get!("home.css");
 
         let toggle_config = Rc::new(move || world.msg(Msg::ToggleConfig));
+        let set_fluid_property = Rc::new(move |property: FluidProperty| world3.msg(Msg::SetFluidProperty(property)));
 
         html! {
         <div class=css["wrapper"]>
@@ -32,9 +34,10 @@ impl View for Home {
             </div>
             <Menu data={
                 MenuData {
-                    toggle_config,
                     open: open,
-                    config_data: &world2.read().state.config_data
+                    toggle_config,
+                    set_fluid_property,
+                    config_data: &world2.read().state.config_data,
                 }
             } />
             <Canvas />

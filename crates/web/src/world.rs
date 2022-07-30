@@ -1,6 +1,6 @@
 use crate::{
     resources::{RenderFn, Resources},
-    state::SimAppState,
+    state::SimAppState, utility::enums::FluidProperty,
 };
 use app_world::{AppWorld, AppWorldWrapper};
 
@@ -14,10 +14,7 @@ pub type SimAppWorldWrapper = AppWorldWrapper<World>;
 pub enum Msg {
     ToggleConfig,
     SetRenderFn(RenderFn),
-    SetDiffusion(f32),
-    SetTimeStep(f32),
-    SetDensity(f32),
-    SetVelocity(f32),
+    SetFluidProperty(FluidProperty)
 }
 
 impl World {
@@ -48,20 +45,13 @@ impl AppWorld for World {
                 self.set_render_fn(render_fn);
             }
 
-            Msg::SetDiffusion(value) => {
-                self.state.config_data.diffusion = value;
-            }
-
-            Msg::SetTimeStep(value) => {
-                self.state.config_data.time_step = value;
-            }
-
-            Msg::SetDensity(value) => {
-                self.state.config_data.density = value;
-            }
-
-            Msg::SetVelocity(value) => {
-                self.state.config_data.velocity = value
+            Msg::SetFluidProperty(fluid_prop) => {
+                match fluid_prop {
+                    FluidProperty::Diffusion(value) => self.state.config_data.diffusion = value,
+                    FluidProperty::TimeStep(value) => self.state.config_data.time_step = value,
+                    FluidProperty::Density(value) => self.state.config_data.density = value,
+                    FluidProperty::Velocity(value) => self.state.config_data.velocity = value,
+                }
             }
         }
         (self.resources.render_fn)();
