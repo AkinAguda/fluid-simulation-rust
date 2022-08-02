@@ -1,8 +1,13 @@
 use crate::{
     resources::{RenderFn, Resources},
-    state::SimAppState, utility::enums::FluidProperty,
+    state::SimAppState,
+    utility::enums::FluidProperty,
 };
 use app_world::{AppWorld, AppWorldWrapper};
+
+use fluid_sim::{Fluid, FluidConfig};
+
+use crate::constants::{DEFAULT_DIFFUSION, DEFAULT_TIME_STEP};
 
 pub struct World {
     pub state: SimAppState,
@@ -14,7 +19,8 @@ pub type SimAppWorldWrapper = AppWorldWrapper<World>;
 pub enum Msg {
     ToggleConfig,
     SetRenderFn(RenderFn),
-    SetFluidProperty(FluidProperty)
+    SetFluidProperty(FluidProperty),
+    CreateFluid(u16, u16),
 }
 
 impl World {
@@ -45,13 +51,16 @@ impl AppWorld for World {
                 self.set_render_fn(render_fn);
             }
 
-            Msg::SetFluidProperty(fluid_prop) => {
-                match fluid_prop {
-                    FluidProperty::Diffusion(value) => self.state.config_data.diffusion = value,
-                    FluidProperty::TimeStep(value) => self.state.config_data.time_step = value,
-                    FluidProperty::Density(value) => self.state.config_data.density = value,
-                    FluidProperty::Velocity(value) => self.state.config_data.velocity = value,
-                }
+            Msg::SetFluidProperty(fluid_prop) => match fluid_prop {
+                FluidProperty::Diffusion(value) => self.state.config_data.diffusion = value,
+                FluidProperty::TimeStep(value) => self.state.config_data.time_step = value,
+                FluidProperty::Density(value) => self.state.config_data.density = value,
+                FluidProperty::Velocity(value) => self.state.config_data.velocity = value,
+            },
+
+            Msg::CreateFluid(nw, nh) => {
+                let fluid_config = FluidConfig::new(nw, nh, DEFAULT_DIFFUSION);
+                self.state.fluid = Fluid::new(fluid_config, DEFAULT_TIME_STEP);
             }
         }
         (self.resources.render_fn)();
