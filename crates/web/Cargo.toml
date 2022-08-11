@@ -27,5 +27,8 @@ features = [
     "Document",
     "MouseEvent",
     "Window",
-    "console"
+    "console",
+    "DomRect",
+    "Element",
+    "HtmlCanvasElement"
 ]

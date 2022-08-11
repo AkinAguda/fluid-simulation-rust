@@ -1,9 +1,10 @@
-use std::rc::Rc;
 use percy_dom::*;
+use std::rc::Rc;
 
 use crate::{
     components::{menu::menu_view::MenuData, *},
-    world::SimAppWorldWrapper, utility::enums::FluidProperty,
+    utility::enums::FluidProperty,
+    world::SimAppWorldWrapper,
 };
 
 use crate::world::Msg;
@@ -19,11 +20,15 @@ impl View for Home {
         let world = self.world.clone();
         let world2 = self.world.clone();
         let world3 = self.world.clone();
+        let world4 = self.world.clone();
         let open = world.read().state.config_open.clone();
         let css = css_mod::get!("home.css");
 
+        let set_fluid_size =
+            Rc::new(move |nw: u16, nh: u16| world4.msg(Msg::UpdateFluidSize(nw, nh)));
         let toggle_config = Rc::new(move || world.msg(Msg::ToggleConfig));
-        let set_fluid_property = Rc::new(move |property: FluidProperty| world3.msg(Msg::SetFluidProperty(property)));
+        let set_fluid_property =
+            Rc::new(move |property: FluidProperty| world3.msg(Msg::SetFluidProperty(property)));
 
         html! {
         <div class=css["wrapper"]>
@@ -40,7 +45,7 @@ impl View for Home {
                     config_data: &world2.read().state.config_data,
                 }
             } />
-            <Canvas />
+            <Canvas set_fluid_size=set_fluid_size />
         </div>
         }
     }

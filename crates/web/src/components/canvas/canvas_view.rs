@@ -1,8 +1,12 @@
+use std::rc::Rc;
+
 use percy_dom::*;
 
 use crate::log;
 
-pub struct Canvas {}
+pub struct Canvas {
+    pub set_fluid_size: Rc<dyn Fn(u16, u16) -> ()>,
+}
 
 impl View for Canvas {
     fn render(&self) -> VirtualNode {
