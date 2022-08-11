@@ -13,16 +13,17 @@ pub struct SimAppState {
 
 impl SimAppState {
     pub fn new() -> SimAppState {
-        let fluid_config = FluidConfig::new(10, 10, DEFAULT_DIFFUSION);
+        let diffusion = DEFAULT_DIFFUSION;
+        let fluid_config = FluidConfig::new(10, 10, diffusion, DEFAULT_TIME_STEP);
         SimAppState {
             config_open: true,
             config_data: ConfigData {
                 time_step: DEFAULT_TIME_STEP,
-                diffusion: DEFAULT_DIFFUSION,
+                diffusion,
                 density: DEFAULT_ADDED_DENSITY,
                 velocity: DEFAULT_ADDED_VELOCITY,
             },
-            fluid: Fluid::new(fluid_config, DEFAULT_TIME_STEP),
+            fluid: Fluid::new(fluid_config),
         }
     }
 

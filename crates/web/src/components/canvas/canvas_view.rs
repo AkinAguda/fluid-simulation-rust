@@ -1,5 +1,7 @@
 use percy_dom::*;
 
+use crate::log;
+
 pub struct Canvas {}
 
 impl View for Canvas {
@@ -10,7 +12,7 @@ impl View for Canvas {
                 key="main-canvas"
                 class=css["canvas"]
                 on_create_element = move |element: web_sys::Element| {
-                    element.set_inner_html("After");
+                    log("CREATED");
                 }
             ></canvas>
         }

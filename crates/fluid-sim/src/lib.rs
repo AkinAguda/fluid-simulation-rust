@@ -6,14 +6,23 @@ use std::cmp;
 use utils::{lerp, pure_ix_fn, set_panic_hook, BoundaryType, PropertyType};
 
 pub struct FluidConfig {
-    nw: u16,
-    nh: u16,
-    diffusion: f32,
+    pub nw: u16,
+    pub nh: u16,
+    pub diffusion: f32,
+    pub dt: f32,
+    pub size: u16,
 }
 
 impl FluidConfig {
-    pub fn new(nw: u16, nh: u16, diffusion: f32) -> FluidConfig {
-        FluidConfig { nw, nh, diffusion }
+    pub fn new(nw: u16, nh: u16, diffusion: f32, dt: f32) -> FluidConfig {
+        let size = (nw + 2) * (nh + 2);
+        FluidConfig {
+            nw,
+            nh,
+            diffusion,
+            size,
+            dt,
+        }
     }
 
     pub fn set_diffusion(&mut self, diffusion: f32) {
@@ -23,11 +32,16 @@ impl FluidConfig {
     pub fn get_diffusion(&self) -> f32 {
         self.diffusion
     }
+
+    pub fn update_Size(&mut self, nw: u16, nh: u16) {
+        self.nw = nw;
+        self.nh = nh;
+        self.size = (nw + 2) * (nh + 2);
+    }
 }
 
 pub struct Fluid {
-    config: FluidConfig,
-    dt: f32,
+    pub config: FluidConfig,
     empty_property: PropertyType,
     velocity_x: PropertyType,
     velocity_y: PropertyType,
@@ -40,17 +54,14 @@ pub struct Fluid {
     density_source: PropertyType,
     poisson_values: PropertyType,
     divergence_values: PropertyType,
-    size: u16,
 }
 
 impl Fluid {
-    pub fn new(config: FluidConfig, dt: f32) -> Fluid {
+    pub fn new(config: FluidConfig) -> Fluid {
         set_panic_hook();
-        let size = (config.nw + 2) * (config.nh + 2);
-        let vector_size = size.into();
+        let vector_size = config.size.into();
         Fluid {
             config,
-            dt,
             empty_property: vec![0.0; vector_size],
             velocity_x: vec![0.0; vector_size],
             velocity_y: vec![0.0; vector_size],
@@ -63,7 +74,6 @@ impl Fluid {
             density_source: vec![0.0; vector_size],
             poisson_values: vec![0.0; vector_size],
             divergence_values: vec![0.0; vector_size],
-            size,
         }
     }
 
@@ -71,8 +81,8 @@ impl Fluid {
         add_source!(
             self.initial_density,
             self.density_source,
-            self.size as usize,
-            self.dt
+            self.config.size as usize,
+            self.config.dt
         );
 
         diffuse!(
@@ -82,7 +92,7 @@ impl Fluid {
             self.density,
             self.initial_density,
             self.config.diffusion,
-            self.dt
+            self.config.dt
         );
 
         std::mem::swap(&mut self.density, &mut self.initial_density);
@@ -95,7 +105,7 @@ impl Fluid {
             self.initial_density,
             self.velocity_x,
             self.velocity_y,
-            self.dt
+            self.config.dt
         );
 
         std::mem::swap(&mut self.density, &mut self.initial_density);
@@ -105,15 +115,15 @@ impl Fluid {
         add_source!(
             self.initial_velocity_x,
             self.velocity_x_source,
-            self.size as usize,
-            self.dt
+            self.config.size as usize,
+            self.config.dt
         );
 
         add_source!(
             self.initial_velocity_y,
             self.velocity_y_source,
-            self.size as usize,
-            self.dt
+            self.config.size as usize,
+            self.config.dt
         );
 
         diffuse!(
@@ -123,7 +133,7 @@ impl Fluid {
             self.velocity_x,
             self.initial_velocity_x,
             self.config.diffusion,
-            self.dt
+            self.config.dt
         );
 
         std::mem::swap(&mut self.velocity_x, &mut self.initial_velocity_x);
@@ -135,7 +145,7 @@ impl Fluid {
             self.velocity_y,
             self.initial_velocity_y,
             self.config.diffusion,
-            self.dt
+            self.config.dt
         );
 
         std::mem::swap(&mut self.velocity_y, &mut self.initial_velocity_y);
@@ -160,7 +170,7 @@ impl Fluid {
             self.initial_velocity_x,
             self.initial_velocity_x,
             self.initial_velocity_y,
-            self.dt
+            self.config.dt
         );
 
         advect!(
@@ -171,7 +181,7 @@ impl Fluid {
             self.initial_velocity_y,
             self.initial_velocity_x,
             self.initial_velocity_y,
-            self.dt
+            self.config.dt
         );
         project!(
             self.config.nw,
@@ -224,28 +234,6 @@ impl Fluid {
         pure_ix_fn(x, y, self.config.nw, self.config.nh) as u16
     }
 
-    pub fn get_nw(&self) -> u16 {
-        self.config.nw
-    }
-
-    pub fn get_nh(&self) -> u16 {
-        self.config.nh
-    }
-
-    pub fn get_size(&self) -> u16 {
-        self.size
-    }
-
-    pub fn set_dt(&mut self, dt: f32) {
-        self.dt = dt
-    }
-
-    pub fn get_velocity_x(&self, index: usize) -> f32 {
-        self.velocity_x[index]
-    }
-    pub fn get_velocity_y(&self, index: usize) -> f32 {
-        self.velocity_y[index]
-    }
     pub fn get_density_expensive(&self) -> PropertyType {
         self.density.clone()
     }

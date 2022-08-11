@@ -5,10 +5,6 @@ use crate::{
 };
 use app_world::{AppWorld, AppWorldWrapper};
 
-use fluid_sim::{Fluid, FluidConfig};
-
-use crate::constants::{DEFAULT_DIFFUSION, DEFAULT_TIME_STEP};
-
 pub struct World {
     pub state: SimAppState,
     resources: Resources,
@@ -20,7 +16,7 @@ pub enum Msg {
     ToggleConfig,
     SetRenderFn(RenderFn),
     SetFluidProperty(FluidProperty),
-    CreateFluid(u16, u16),
+    UpdateFluidSize(u16, u16),
 }
 
 impl World {
@@ -52,15 +48,20 @@ impl AppWorld for World {
             }
 
             Msg::SetFluidProperty(fluid_prop) => match fluid_prop {
-                FluidProperty::Diffusion(value) => self.state.config_data.diffusion = value,
-                FluidProperty::TimeStep(value) => self.state.config_data.time_step = value,
+                FluidProperty::Diffusion(value) => {
+                    self.state.config_data.diffusion = value;
+                    self.state.fluid.config.set_diffusion(value);
+                }
+                FluidProperty::TimeStep(value) => {
+                    self.state.config_data.time_step = value;
+                    self.state.fluid.config.dt = value;
+                }
                 FluidProperty::Density(value) => self.state.config_data.density = value,
                 FluidProperty::Velocity(value) => self.state.config_data.velocity = value,
             },
 
-            Msg::CreateFluid(nw, nh) => {
-                let fluid_config = FluidConfig::new(nw, nh, DEFAULT_DIFFUSION);
-                self.state.fluid = Fluid::new(fluid_config, DEFAULT_TIME_STEP);
+            Msg::UpdateFluidSize(nw, nh) => {
+                self.state.fluid.config.update_Size(nw, nh);
             }
         }
         (self.resources.render_fn)();
