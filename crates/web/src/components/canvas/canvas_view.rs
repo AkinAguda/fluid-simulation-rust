@@ -14,14 +14,15 @@ impl View for Canvas {
         let set_fluid_size = self.set_fluid_size.clone();
         html! {
             <canvas
+                id="main-canvas"
                 key="main-canvas"
                 class=css["canvas"]
-                on_create_element = move |canvas: web_sys::Element| {
-                    let canvas = canvas.dyn_into::<web_sys::HtmlCanvasElement>().unwrap();
-                    resize_canvas_to_display_size(&canvas);
-                    let (width, height) = get_display_dimensions(canvas.width(), canvas.height());
-                    (set_fluid_size)(width as u16, height as u16);
-                }
+                // on_create_element = move |canvas: web_sys::Element| {
+                //     let canvas = canvas.dyn_into::<web_sys::HtmlCanvasElement>().unwrap();
+                //     resize_canvas_to_display_size(&canvas);
+                //     let (width, height) = get_display_dimensions(canvas.width(), canvas.height());
+                //     (set_fluid_size)(width as u16, height as u16);
+                // }
             ></canvas>
         }
     }

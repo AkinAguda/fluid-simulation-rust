@@ -19,15 +19,21 @@ pub fn resize_canvas_to_display_size(canvas: &web_sys::HtmlCanvasElement) -> boo
 }
 
 pub fn get_display_dimensions(width: u32, height: u32) -> (u32, u32) {
-    let mut count: f32 = 220.0;
+    let mut count: u32 = 220;
     let div = (u32::max(width, height) / u32::min(width, height)) as f32;
     if div as f32 <= 1.5 {
-        count = 180.0;
+        count = 180;
     }
     if width > height {
-        (count as u32, (count / (width / height) as f32) as u32)
+        (
+            count as u32,
+            (count as f32 / (width / height) as f32) as u32,
+        )
     } else if height > width {
-        ((count / (height / width) as f32) as u32, count as u32)
+        (
+            (count as f32 / (height / width) as f32) as u32,
+            count as u32,
+        )
     } else {
         (width, height)
     }
