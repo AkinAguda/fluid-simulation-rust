@@ -1,5 +1,4 @@
 mod components;
-mod constants;
 mod pages;
 mod resources;
 mod state;
@@ -11,13 +10,13 @@ use resources::RenderFn;
 use wasm_bindgen::prelude::*;
 use web_sys;
 
-use crate::utility::functions::{get_display_dimensions, resize_canvas_to_display_size};
+use crate::utility::functions::initialise_canvas;
 
 use crate::world::Msg;
 
 use pages::home::home_view::Home;
 
-use percy_dom::{prelude::*, JsCast};
+use percy_dom::prelude::*;
 
 use crate::world::{SimAppWorldWrapper, World};
 use percy_dom::{render::create_render_scheduler, VirtualNode};
@@ -67,23 +66,6 @@ fn create_app(render: RenderFn) -> SimApp {
     SimApp {
         world: AppWorldWrapper::new(World::new(render)),
     }
-}
-
-fn initialise_canvas(app: SimApp) -> SimApp {
-    let window = web_sys::window().unwrap();
-    let document = window.document().unwrap();
-    let canvas = document
-        .get_element_by_id("main-canvas")
-        .unwrap()
-        .dyn_into::<web_sys::HtmlCanvasElement>()
-        .unwrap();
-
-    resize_canvas_to_display_size(&canvas);
-    let (width, height) = get_display_dimensions(canvas.width(), canvas.height());
-    app.world
-        .msg(Msg::UpdateFluidSize(width as u16, height as u16));
-
-    app
 }
 
 #[wasm_bindgen]

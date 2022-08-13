@@ -1,6 +1,11 @@
 use num_traits::ToPrimitive;
+use percy_dom::JsCast;
 
-pub fn resize_canvas_to_display_size(canvas: &web_sys::HtmlCanvasElement) -> bool {
+use crate::utility::constants::CANVAS_ID;
+use crate::world::Msg;
+use crate::SimApp;
+
+fn resize_canvas_to_display_size(canvas: &web_sys::HtmlCanvasElement) -> bool {
     let window = web_sys::window().unwrap();
     let dpr = window.device_pixel_ratio();
     let dom_rect = canvas.get_bounding_client_rect();
@@ -37,4 +42,21 @@ pub fn get_display_dimensions(width: u32, height: u32) -> (u32, u32) {
     } else {
         (width, height)
     }
+}
+
+pub fn initialise_canvas(app: SimApp) -> SimApp {
+    let window = web_sys::window().unwrap();
+    let document = window.document().unwrap();
+    let canvas = document
+        .get_element_by_id(CANVAS_ID)
+        .unwrap()
+        .dyn_into::<web_sys::HtmlCanvasElement>()
+        .unwrap();
+
+    resize_canvas_to_display_size(&canvas);
+    let (width, height) = get_display_dimensions(canvas.width(), canvas.height());
+    app.world
+        .msg(Msg::UpdateFluidSize(width as u16, height as u16));
+
+    app
 }

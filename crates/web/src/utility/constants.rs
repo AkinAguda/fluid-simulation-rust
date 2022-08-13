@@ -17,3 +17,5 @@ pub const DEFAULT_ADDED_VELOCITY: f32 = 50.0;
 pub const DEFAULT_ADDED_VELOCITY_MIN: f32 = 0.0;
 pub const DEFAULT_ADDED_VELOCITY_MAX: f32 = 500.0;
 pub const DEFAULT_ADDED_VELOCITY_STEP: f32 = 50.0;
+
+pub const CANVAS_ID: &str = "main-canvas";

@@ -1,6 +1,6 @@
 use fluid_sim::{Fluid, FluidConfig};
 
-use crate::constants::{
+use crate::utility::constants::{
     DEFAULT_ADDED_DENSITY, DEFAULT_ADDED_VELOCITY, DEFAULT_DIFFUSION, DEFAULT_TIME_STEP,
 };
 use crate::utility::structs::ConfigData;

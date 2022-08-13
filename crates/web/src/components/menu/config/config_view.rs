@@ -1,7 +1,7 @@
 use std::rc::Rc;
 
 use super::super::range::range_view::Range;
-use crate::{ constants as sim_c, utility::enums::FluidProperty};
+use crate::utility::{constants as sim_c, enums::FluidProperty};
 use percy_dom::*;
 
 pub struct ConfigComponentData {
@@ -14,7 +14,7 @@ pub struct ConfigComponentData {
 }
 
 pub struct Config {
-    pub data: ConfigComponentData
+    pub data: ConfigComponentData,
 }
 
 impl View for Config {
@@ -45,7 +45,7 @@ impl View for Config {
                 min: sim_c::DEFAULT_MIN_TIME_STEP,
                 max: sim_c::DEFAULT_MAX_TIME_STEP,
                 step: sim_c::DEFAULT_TIME_STEP_STEP,
-                oninput: Rc::new(set_time_step)
+                oninput: Rc::new(set_time_step),
             },
             Range {
                 key: "added_d",
@@ -54,7 +54,7 @@ impl View for Config {
                 min: sim_c::DEFAULT_ADDED_DENSITY_MIN,
                 max: sim_c::DEFAULT_ADDED_DENSITY_MAX,
                 step: sim_c::DEFAULT_ADDED_DENSITY_STEP,
-                oninput: Rc::new(set_density)
+                oninput: Rc::new(set_density),
             },
             Range {
                 key: "added_v",
@@ -63,7 +63,7 @@ impl View for Config {
                 min: sim_c::DEFAULT_ADDED_VELOCITY_MIN,
                 max: sim_c::DEFAULT_ADDED_VELOCITY_MAX,
                 step: sim_c::DEFAULT_ADDED_VELOCITY_STEP,
-                oninput: Rc::new(set_velocity)
+                oninput: Rc::new(set_velocity),
             },
             Range {
                 key: "diff",
@@ -72,7 +72,7 @@ impl View for Config {
                 min: sim_c::DEFAULT_MIN_DIFFUSION,
                 max: sim_c::DEFAULT_MAX_DIFFUSION,
                 step: sim_c::DEFAULT_DIFFUSION_STEP,
-                oninput: Rc::new(set_diffusion)
+                oninput: Rc::new(set_diffusion),
             },
         ];
 
