@@ -2,7 +2,7 @@ use num_traits::ToPrimitive;
 use percy_dom::JsCast;
 
 use crate::utility::constants::CANVAS_ID;
-use crate::world::Msg;
+use crate::world::{Msg, SimAppWorldWrapper};
 use crate::SimApp;
 
 fn resize_canvas_to_display_size(canvas: &web_sys::HtmlCanvasElement) -> bool {
@@ -59,4 +59,9 @@ pub fn initialise_canvas(app: SimApp) -> SimApp {
         .msg(Msg::UpdateFluidSize(width as u16, height as u16));
 
     app
+}
+
+pub fn wrld_clbk<T>(world: &SimAppWorldWrapper, f: impl FnOnce(SimAppWorldWrapper) -> T) -> T {
+    let world_clone = world.clone();
+    (f)(world_clone)
 }
