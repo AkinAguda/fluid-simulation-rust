@@ -33,7 +33,7 @@ impl View for Config {
         let set_time_step = self.get_property_updater(Rc::new(|val| FluidProperty::TimeStep(val)));
         let set_density = self.get_property_updater(Rc::new(|val| FluidProperty::Density(val)));
         let set_velocity = self.get_property_updater(Rc::new(|val| FluidProperty::Velocity(val)));
-        let set_diffusion = self.get_property_updater(Rc::new(|val| FluidProperty::Velocity(val)));
+        let set_diffusion = self.get_property_updater(Rc::new(|val| FluidProperty::Diffusion(val)));
 
         let ranges = vec![
             Range {
