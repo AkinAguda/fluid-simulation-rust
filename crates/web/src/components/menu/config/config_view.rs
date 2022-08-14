@@ -17,26 +17,24 @@ pub struct Config {
     pub data: ConfigComponentData,
 }
 
+impl Config {
+    fn get_property_updater(&self, f: Rc<dyn Fn(f32) -> FluidProperty>) -> Rc<dyn Fn(f32) -> ()> {
+        let set_fluid_property_clone = self.data.set_fluid_property.clone();
+        Rc::new(move |val: f32| {
+            (set_fluid_property_clone)((*f)(val));
+        })
+    }
+}
+
 impl View for Config {
     fn render(&self) -> VirtualNode {
         let css = css_mod::get!("config.css");
-        let set_fluid_property_1 = self.data.set_fluid_property.clone();
-        let set_fluid_property_2 = self.data.set_fluid_property.clone();
-        let set_fluid_property_3 = self.data.set_fluid_property.clone();
-        let set_fluid_property_4 = self.data.set_fluid_property.clone();
 
-        let set_time_step = move |val: f32| {
-            (set_fluid_property_1.clone())(FluidProperty::TimeStep(val));
-        };
-        let set_density = move |val: f32| {
-            (set_fluid_property_2.clone())(FluidProperty::Density(val));
-        };
-        let set_velocity = move |val: f32| {
-            (set_fluid_property_3.clone())(FluidProperty::Velocity(val));
-        };
-        let set_diffusion = move |val: f32| {
-            (set_fluid_property_4.clone())(FluidProperty::Diffusion(val));
-        };
+        let set_time_step = self.get_property_updater(Rc::new(|val| FluidProperty::TimeStep(val)));
+        let set_density = self.get_property_updater(Rc::new(|val| FluidProperty::Density(val)));
+        let set_velocity = self.get_property_updater(Rc::new(|val| FluidProperty::Velocity(val)));
+        let set_diffusion = self.get_property_updater(Rc::new(|val| FluidProperty::Velocity(val)));
+
         let ranges = vec![
             Range {
                 key: "dt",
@@ -45,7 +43,7 @@ impl View for Config {
                 min: sim_c::DEFAULT_MIN_TIME_STEP,
                 max: sim_c::DEFAULT_MAX_TIME_STEP,
                 step: sim_c::DEFAULT_TIME_STEP_STEP,
-                oninput: Rc::new(set_time_step),
+                oninput: set_time_step,
             },
             Range {
                 key: "added_d",
@@ -54,7 +52,7 @@ impl View for Config {
                 min: sim_c::DEFAULT_ADDED_DENSITY_MIN,
                 max: sim_c::DEFAULT_ADDED_DENSITY_MAX,
                 step: sim_c::DEFAULT_ADDED_DENSITY_STEP,
-                oninput: Rc::new(set_density),
+                oninput: set_density,
             },
             Range {
                 key: "added_v",
@@ -63,7 +61,7 @@ impl View for Config {
                 min: sim_c::DEFAULT_ADDED_VELOCITY_MIN,
                 max: sim_c::DEFAULT_ADDED_VELOCITY_MAX,
                 step: sim_c::DEFAULT_ADDED_VELOCITY_STEP,
-                oninput: Rc::new(set_velocity),
+                oninput: set_velocity,
             },
             Range {
                 key: "diff",
@@ -72,7 +70,7 @@ impl View for Config {
                 min: sim_c::DEFAULT_MIN_DIFFUSION,
                 max: sim_c::DEFAULT_MAX_DIFFUSION,
                 step: sim_c::DEFAULT_DIFFUSION_STEP,
-                oninput: Rc::new(set_diffusion),
+                oninput: set_diffusion,
             },
         ];
 
