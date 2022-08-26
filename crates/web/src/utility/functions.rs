@@ -44,7 +44,7 @@ pub fn get_display_dimensions(width: u32, height: u32) -> (u32, u32) {
     }
 }
 
-pub fn initialise_canvas(app: SimApp) -> SimApp {
+pub fn initialise_canvas(app: SimApp) -> (SimApp, u32, u32) {
     let window = web_sys::window().unwrap();
     let document = window.document().unwrap();
     let canvas = document
@@ -54,11 +54,13 @@ pub fn initialise_canvas(app: SimApp) -> SimApp {
         .unwrap();
 
     resize_canvas_to_display_size(&canvas);
+
     let (width, height) = get_display_dimensions(canvas.width(), canvas.height());
+
     app.world
         .msg(Msg::UpdateFluidSize(width as u16, height as u16));
 
-    app
+    (app, width, height)
 }
 
 pub fn wrld_clbk<T>(world: &SimAppWorldWrapper, f: impl FnOnce(SimAppWorldWrapper) -> T) -> T {

@@ -82,7 +82,11 @@ impl WebClient {
 
         pdom.update(render_app_with_world(&app));
 
-        let app2 = initialise_canvas(app2);
+        let (app2, nw, nh) = initialise_canvas(app2);
+
+        let vertices: Vec<f32> = vec![0.0; (nw * nh * 2) as usize];
+
+        // initialise webgl here
 
         let render = move || render_app_with_world(&app);
 
