@@ -1,5 +1,6 @@
 use num_traits::ToPrimitive;
 use percy_dom::JsCast;
+use web_sys::{WebGl2RenderingContext, WebGlShader};
 
 use crate::utility::constants::CANVAS_ID;
 use crate::world::{Msg, SimAppWorldWrapper};
@@ -66,4 +67,26 @@ pub fn initialise_canvas(app: SimApp) -> (SimApp, u32, u32) {
 pub fn wrld_clbk<T>(world: &SimAppWorldWrapper, f: impl FnOnce(SimAppWorldWrapper) -> T) -> T {
     let world_clone = world.clone();
     (f)(world_clone)
+}
+
+pub fn create_shader(
+    context: WebGl2RenderingContext,
+    shader_type: u32,
+    source: &str,
+) -> Result<WebGlShader, String> {
+    let shader = context.create_shader(shader_type).unwrap();
+    context.shader_source(&shader, source);
+    context.compile_shader(&shader);
+
+    if context
+        .get_shader_parameter(&shader, WebGl2RenderingContext::COMPILE_STATUS)
+        .as_bool()
+        .unwrap_or(false)
+    {
+        Ok(shader)
+    } else {
+        let err = Err(context.get_shader_info_log(&shader).unwrap());
+        context.delete_shader(Some(&shader));
+        err
+    }
 }

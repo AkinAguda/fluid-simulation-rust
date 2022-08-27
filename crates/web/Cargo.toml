@@ -30,5 +30,10 @@ features = [
     "console",
     "DomRect",
     "Element",
-    "HtmlCanvasElement"
+    "HtmlCanvasElement",
+    'WebGlBuffer',
+    'WebGlVertexArrayObject',
+    'WebGl2RenderingContext',
+    'WebGlProgram',
+    'WebGlShader',
 ]
