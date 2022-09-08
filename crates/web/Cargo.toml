@@ -32,11 +32,12 @@ features = [
     "DomRect",
     "Element",
     "HtmlCanvasElement",
-    'WebGlBuffer',
-    'WebGlVertexArrayObject',
-    'WebGlRenderingContext',
-    'WebGlUniformLocation',
-    'WebGlProgram',
-    'WebGlShader',
-    'WebGlTexture'
+    "WebGlBuffer",
+    "WebGlVertexArrayObject",
+    "WebGlRenderingContext",
+    "WebGlUniformLocation",
+    "WebGlProgram",
+    "WebGlShader",
+    "WebGlTexture",
+    "WebGlFramebuffer"
 ]

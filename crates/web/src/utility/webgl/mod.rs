@@ -1,3 +1,4 @@
+use js_sys::Float32Array;
 use percy_dom::JsCast;
 use web_sys::{WebGlRenderingContext, WebGlTexture};
 
@@ -95,16 +96,17 @@ pub fn initialise_webgl(canvas: &web_sys::HtmlCanvasElement, nw: f32, nh: f32) -
     context.uniform2f(Some(&image_resolution), nw, nh);
 
     // Populating vertices
-    let mut vertices: Vec<f32> = vec![0.0; (nw * nh * 2.0) as usize];
+    let mut vertices_1: Vec<f32> = vec![0.0; (nw * nh * 2.0) as usize];
+    let mut vertices = Float32Array::new_with_length((nw * nh * 2.0) as u32);
     // let density_per_square: Vec<f32> = vec![0.0; (nw * nh * 2.0) as usize];
-    let mut point_index = 0.5;
+    let mut point_index: u32 = 0;
     const HALF_SQUARE: f32 = 0.5;
 
     for i in 1..=nh as u32 {
         for j in 1..=nw as u32 {
-            vertices[point_index as usize] = j as f32 - HALF_SQUARE;
-            vertices[(point_index + 1.0) as usize] = i as f32 - HALF_SQUARE;
-            point_index += 2.0;
+            vertices.set_index(point_index, j as f32 - HALF_SQUARE);
+            vertices.set_index(point_index + 1, i as f32 - HALF_SQUARE);
+            point_index += 2;
         }
     }
 
@@ -129,7 +131,13 @@ pub fn initialise_webgl(canvas: &web_sys::HtmlCanvasElement, nw: f32, nh: f32) -
 
 fn render_to_texture(webglData: WebGlData) -> WebGlTexture {
     let WebGlData {
-        context, nw, nh, ..
+        context,
+        nw,
+        nh,
+        program_1,
+        position_buffer,
+        vertices,
+        ..
     } = webglData;
 
     let target_texture = context.create_texture().unwrap();
@@ -166,6 +174,29 @@ fn render_to_texture(webglData: WebGlData) -> WebGlTexture {
         WebGlRenderingContext::RGBA,
         WebGlRenderingContext::UNSIGNED_BYTE,
         None,
+    );
+
+    let fb = context.create_framebuffer().unwrap();
+    context.bind_framebuffer(WebGlRenderingContext::FRAMEBUFFER, Some(&fb));
+
+    let attachment_point = WebGlRenderingContext::COLOR_ATTACHMENT0;
+    context.framebuffer_texture_2d(
+        WebGlRenderingContext::FRAMEBUFFER,
+        attachment_point,
+        WebGlRenderingContext::TEXTURE_2D,
+        Some(&target_texture),
+        0,
+    );
+
+    // Render Code
+    context.use_program(Some(&program_1));
+
+    context.bind_buffer(WebGlRenderingContext::ARRAY_BUFFER, Some(&position_buffer));
+
+    context.buffer_data_with_array_buffer_view(
+        WebGlRenderingContext::ARRAY_BUFFER,
+        &vertices,
+        WebGlRenderingContext::STATIC_DRAW,
     );
 
     // Finish render to texture function
