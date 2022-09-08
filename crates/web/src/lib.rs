@@ -10,7 +10,7 @@ use resources::RenderFn;
 use wasm_bindgen::prelude::*;
 use web_sys;
 
-use crate::utility::functions::initialise_canvas;
+use crate::utility::{functions::initialise_canvas, webgl::initialise_webgl};
 
 use crate::world::Msg;
 
@@ -82,11 +82,9 @@ impl WebClient {
 
         pdom.update(render_app_with_world(&app));
 
-        let (app2, nw, nh) = initialise_canvas(app2);
+        let (app2, canvas, nw, nh) = initialise_canvas(app2);
 
-        let vertices: Vec<f32> = vec![0.0; (nw * nh * 2) as usize];
-
-        // initialise webgl here
+        let webGlData = initialise_webgl(&canvas, nw as f32, nh as f32);
 
         let render = move || render_app_with_world(&app);
 

@@ -15,6 +15,7 @@ percy-dom = "0.7"
 app-world = "0.2.0"
 num-traits = "0.2"
 css_mod = "0.1.5"
+const_format = "0.2.26"
 console_error_panic_hook = "0.1.7"
 fluid-sim = { path = "../fluid-sim" }
 
@@ -33,7 +34,9 @@ features = [
     "HtmlCanvasElement",
     'WebGlBuffer',
     'WebGlVertexArrayObject',
-    'WebGl2RenderingContext',
+    'WebGlRenderingContext',
+    'WebGlUniformLocation',
     'WebGlProgram',
     'WebGlShader',
+    'WebGlTexture'
 ]
