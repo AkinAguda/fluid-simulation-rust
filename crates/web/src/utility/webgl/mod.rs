@@ -1,5 +1,5 @@
 use percy_dom::JsCast;
-use web_sys::WebGlRenderingContext;
+use web_sys::{WebGlRenderingContext, WebGlTexture};
 
 use self::functions::{create_program, create_shader};
 
@@ -109,6 +109,8 @@ pub fn initialise_webgl(canvas: &web_sys::HtmlCanvasElement, nw: f32, nh: f32) -
     }
 
     WebGlData {
+        nw,
+        nh,
         context,
         vertices,
         position_attribute_location,
@@ -123,4 +125,48 @@ pub fn initialise_webgl(canvas: &web_sys::HtmlCanvasElement, nw: f32, nh: f32) -
         program_1,
         program_2,
     }
+}
+
+fn render_to_texture(webglData: WebGlData) -> WebGlTexture {
+    let WebGlData {
+        context, nw, nh, ..
+    } = webglData;
+
+    let target_texture = context.create_texture().unwrap();
+    context.bind_texture(WebGlRenderingContext::TEXTURE_2D, Some(&target_texture));
+
+    context.tex_parameteri(
+        WebGlRenderingContext::TEXTURE_2D,
+        WebGlRenderingContext::TEXTURE_WRAP_S,
+        WebGlRenderingContext::CLAMP_TO_EDGE as i32,
+    );
+    context.tex_parameteri(
+        WebGlRenderingContext::TEXTURE_2D,
+        WebGlRenderingContext::TEXTURE_WRAP_T,
+        WebGlRenderingContext::CLAMP_TO_EDGE as i32,
+    );
+    context.tex_parameteri(
+        WebGlRenderingContext::TEXTURE_2D,
+        WebGlRenderingContext::TEXTURE_MIN_FILTER,
+        WebGlRenderingContext::NEAREST as i32,
+    );
+    context.tex_parameteri(
+        WebGlRenderingContext::TEXTURE_2D,
+        WebGlRenderingContext::TEXTURE_MAG_FILTER,
+        WebGlRenderingContext::LINEAR as i32,
+    );
+
+    context.tex_image_2d_with_i32_and_i32_and_i32_and_format_and_type_and_opt_array_buffer_view(
+        WebGlRenderingContext::TEXTURE_2D,
+        0,
+        WebGlRenderingContext::RGBA as i32,
+        nw as i32,
+        nh as i32,
+        0,
+        WebGlRenderingContext::RGBA,
+        WebGlRenderingContext::UNSIGNED_BYTE,
+        None,
+    );
+
+    // Finish render to texture function
 }
