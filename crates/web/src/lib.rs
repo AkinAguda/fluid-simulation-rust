@@ -84,7 +84,7 @@ impl WebClient {
 
         let (app2, canvas, nw, nh) = initialise_canvas(app2);
 
-        let webGlData = initialise_webgl(&canvas, nw as f32, nh as f32);
+        let webgl_data = initialise_webgl(&canvas, nw as f32, nh as f32);
 
         let render = move || render_app_with_world(&app);
 

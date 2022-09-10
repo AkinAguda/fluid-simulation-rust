@@ -1,3 +1,4 @@
+use fluid_sim::Fluid;
 use js_sys::Float32Array;
 use percy_dom::JsCast;
 use web_sys::{WebGlRenderingContext as GL, WebGlTexture};
@@ -6,7 +7,7 @@ use self::functions::{create_program, create_shader};
 
 mod constants;
 mod functions;
-mod structs;
+pub mod structs;
 
 use constants::{FRAGMENT_SHADER_1, FRAGMENT_SHADER_2, VERTEX_SHADER_1, VERTEX_SHADER_2};
 use structs::WebGlData;
@@ -281,4 +282,10 @@ fn set_rectange(context: &GL, x: f32, y: f32, width: f32, height: f32) {
     arr.copy_from(&[x1, y1, x2, y1, x1, y2, x1, y2, x2, y1, x2, y2]);
 
     context.buffer_data_with_array_buffer_view(GL::ARRAY_BUFFER, &arr, GL::STATIC_DRAW);
+}
+
+pub fn render_fluid(webgl_data: &WebGlData, fluid_density: &Vec<f32>) {
+    webgl_data.densities.copy_from(fluid_density);
+    render_to_texture(&webgl_data);
+    render_to_canvas(&webgl_data);
 }
