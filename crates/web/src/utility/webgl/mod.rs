@@ -1,5 +1,6 @@
 use js_sys::Float32Array;
 use percy_dom::JsCast;
+use wasm_bindgen::prelude::*;
 use web_sys::{WebGlRenderingContext as GL, WebGlTexture};
 
 use self::functions::{create_program, create_shader};
@@ -10,6 +11,18 @@ pub mod structs;
 
 use constants::{FRAGMENT_SHADER_1, FRAGMENT_SHADER_2, VERTEX_SHADER_1, VERTEX_SHADER_2};
 use structs::WebGlData;
+
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = console)]
+    fn log(s: &str);
+
+    #[wasm_bindgen(js_namespace = console, js_name = log)]
+    fn log_u32(a: u32);
+
+    #[wasm_bindgen(js_namespace = console, js_name = log)]
+    fn log_many(a: &str, b: &str);
+}
 
 pub fn initialise_webgl(canvas: &web_sys::HtmlCanvasElement, nw: f32, nh: f32) -> WebGlData {
     let context = canvas
@@ -79,7 +92,7 @@ pub fn initialise_webgl(canvas: &web_sys::HtmlCanvasElement, nw: f32, nh: f32) -
 
     // Populating vertices
     let mut vertices = Float32Array::new_with_length((nw * nh * 2.0) as u32);
-    let densities = Float32Array::new_with_length((nw * nh) as u32);
+    let densities = Float32Array::new_with_length(((nw + 2.0) * (nh + 2.0)) as u32);
     // let density_per_square: Vec<f32> = vec![0.0; (nw * nh * 2.0) as usize];
     let mut point_index: u32 = 0;
     const HALF_SQUARE: f32 = 0.5;

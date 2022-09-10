@@ -23,7 +23,7 @@ fn resize_canvas_to_display_size(canvas: &web_sys::HtmlCanvasElement) -> bool {
     need_resize
 }
 
-pub fn get_display_dimensions(width: u32, height: u32) -> (u32, u32) {
+pub fn get_grid_dimensions(width: u32, height: u32) -> (u32, u32) {
     let mut count: u32 = 220;
     let div = (u32::max(width, height) / u32::min(width, height)) as f32;
     if div as f32 <= 1.5 {
@@ -40,7 +40,7 @@ pub fn get_display_dimensions(width: u32, height: u32) -> (u32, u32) {
             count as u32,
         )
     } else {
-        (width, height)
+        (count, count)
     }
 }
 
@@ -55,12 +55,9 @@ pub fn initialise_canvas(app: SimApp) -> (SimApp, web_sys::HtmlCanvasElement, u3
 
     resize_canvas_to_display_size(&canvas);
 
-    let (width, height) = get_display_dimensions(canvas.width(), canvas.height());
+    let (v_cells, h_cells) = get_grid_dimensions(canvas.width(), canvas.height());
 
-    app.world
-        .msg(Msg::UpdateFluidSize(width as u16, height as u16));
-
-    (app, canvas, width, height)
+    (app, canvas, v_cells, h_cells)
 }
 
 pub fn wrld_clbk<T>(world: &SimAppWorldWrapper, f: impl FnOnce(SimAppWorldWrapper) -> T) -> T {

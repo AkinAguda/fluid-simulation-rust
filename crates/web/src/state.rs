@@ -8,13 +8,12 @@ use crate::utility::structs::ConfigData;
 pub struct SimAppState {
     pub config_open: bool,
     pub config_data: ConfigData,
-    pub fluid: Fluid,
 }
 
 impl SimAppState {
     pub fn new() -> SimAppState {
         let diffusion = DEFAULT_DIFFUSION;
-        let fluid_config = FluidConfig::new(10, 10, diffusion, DEFAULT_TIME_STEP);
+        // let fluid_config = FluidConfig::new(10, 10, diffusion, DEFAULT_TIME_STEP);
         SimAppState {
             config_open: true,
             config_data: ConfigData {
@@ -23,7 +22,6 @@ impl SimAppState {
                 density: DEFAULT_ADDED_DENSITY,
                 velocity: DEFAULT_ADDED_VELOCITY,
             },
-            fluid: Fluid::new(fluid_config),
         }
     }
 

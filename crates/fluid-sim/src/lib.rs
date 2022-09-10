@@ -49,7 +49,7 @@ pub struct Fluid {
     initial_velocity_y: PropertyType,
     velocity_x_source: PropertyType,
     velocity_y_source: PropertyType,
-    density: PropertyType,
+    pub density: PropertyType,
     initial_density: PropertyType,
     density_source: PropertyType,
     poisson_values: PropertyType,

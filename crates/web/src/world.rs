@@ -16,7 +16,7 @@ pub enum Msg {
     ToggleConfig,
     SetRenderFn(RenderFn),
     SetFluidProperty(FluidProperty),
-    UpdateFluidSize(u16, u16),
+    // UpdateFluidSize(u16, u16),
 }
 
 impl World {
@@ -50,19 +50,18 @@ impl AppWorld for World {
             Msg::SetFluidProperty(fluid_prop) => match fluid_prop {
                 FluidProperty::Diffusion(value) => {
                     self.state.config_data.diffusion = value;
-                    self.state.fluid.config.set_diffusion(value);
+                    // self.state.fluid.config.set_diffusion(value);
                 }
                 FluidProperty::TimeStep(value) => {
                     self.state.config_data.time_step = value;
-                    self.state.fluid.config.dt = value;
+                    // self.state.fluid.config.dt = value;
                 }
                 FluidProperty::Density(value) => self.state.config_data.density = value,
                 FluidProperty::Velocity(value) => self.state.config_data.velocity = value,
             },
-
-            Msg::UpdateFluidSize(nw, nh) => {
-                self.state.fluid.config.update_Size(nw, nh);
-            }
+            // Msg::UpdateFluidSize(nw, nh) => {
+            //     self.state.fluid.config.update_Size(nw, nh);
+            // }
         }
         (self.resources.render_fn)();
     }

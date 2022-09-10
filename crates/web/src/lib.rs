@@ -10,13 +10,22 @@ use resources::RenderFn;
 use wasm_bindgen::prelude::*;
 use web_sys;
 
-use crate::utility::{functions::initialise_canvas, webgl::initialise_webgl};
+use crate::utility::{
+    functions::initialise_canvas,
+    webgl::{initialise_webgl, render_fluid},
+};
 
 use crate::world::Msg;
 
 use pages::home::home_view::Home;
 
 use percy_dom::prelude::*;
+
+use crate::utility::constants::{
+    DEFAULT_ADDED_DENSITY, DEFAULT_ADDED_VELOCITY, DEFAULT_DIFFUSION, DEFAULT_TIME_STEP,
+};
+
+use fluid_sim::{Fluid, FluidConfig};
 
 use crate::world::{SimAppWorldWrapper, World};
 use percy_dom::{render::create_render_scheduler, VirtualNode};
@@ -84,7 +93,16 @@ impl WebClient {
 
         let (app2, canvas, nw, nh) = initialise_canvas(app2);
 
+        let fluid = Fluid::new(FluidConfig::new(
+            nw as u16,
+            nh as u16,
+            DEFAULT_DIFFUSION,
+            DEFAULT_TIME_STEP,
+        ));
+
         let webgl_data = initialise_webgl(&canvas, nw as f32, nh as f32);
+
+        render_fluid(&webgl_data, &fluid.density);
 
         let render = move || render_app_with_world(&app);
 
