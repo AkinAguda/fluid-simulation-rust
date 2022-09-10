@@ -1,4 +1,3 @@
-use fluid_sim::Fluid;
 use js_sys::Float32Array;
 use percy_dom::JsCast;
 use web_sys::{WebGlRenderingContext as GL, WebGlTexture};
@@ -285,6 +284,9 @@ fn set_rectange(context: &GL, x: f32, y: f32, width: f32, height: f32) {
 }
 
 pub fn render_fluid(webgl_data: &WebGlData, fluid_density: &Vec<f32>) {
+    /* Maybe in future, the fluid-sim could use the `Float32Array` from js_sys
+    instead of needing to do this copy. This copy is hopefully more performant
+    than the one done in the Ts <-> WASM one */
     webgl_data.densities.copy_from(fluid_density);
     render_to_texture(&webgl_data);
     render_to_canvas(&webgl_data);
