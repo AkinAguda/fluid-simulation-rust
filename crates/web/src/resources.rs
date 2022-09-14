@@ -1,6 +1,11 @@
+pub struct FluidProperySetters {
+    pub time_step: Box<dyn Fn(f32) -> ()>,
+    pub diffusion: Box<dyn Fn(f32) -> ()>,
+}
+
 pub(crate) struct Resources {
     pub(crate) render_fn: RenderFn,
-    // pub
+    pub fluid_propery_setters: FluidProperySetters,
 }
 
 impl Resources {
@@ -8,7 +13,9 @@ impl Resources {
         self.render_fn = render_fn
     }
 
-    // pub fn
+    pub fn set_fluid_propery_setters(&mut self, fluid_propery_setters: FluidProperySetters) {
+        self.fluid_propery_setters = fluid_propery_setters;
+    }
 }
 
 pub type RenderFn = Box<dyn FnMut() -> ()>;

@@ -1,5 +1,3 @@
-use fluid_sim::{Fluid, FluidConfig};
-
 use crate::utility::constants::{
     DEFAULT_ADDED_DENSITY, DEFAULT_ADDED_VELOCITY, DEFAULT_DIFFUSION, DEFAULT_TIME_STEP,
 };
@@ -12,13 +10,11 @@ pub struct SimAppState {
 
 impl SimAppState {
     pub fn new() -> SimAppState {
-        let diffusion = DEFAULT_DIFFUSION;
-        // let fluid_config = FluidConfig::new(10, 10, diffusion, DEFAULT_TIME_STEP);
         SimAppState {
             config_open: true,
             config_data: ConfigData {
                 time_step: DEFAULT_TIME_STEP,
-                diffusion,
+                diffusion: DEFAULT_DIFFUSION,
                 density: DEFAULT_ADDED_DENSITY,
                 velocity: DEFAULT_ADDED_VELOCITY,
             },

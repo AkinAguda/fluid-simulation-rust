@@ -5,6 +5,8 @@ mod state;
 mod utility;
 mod world;
 
+use std::{cell::RefCell, rc::Rc};
+
 use app_world::AppWorldWrapper;
 use resources::RenderFn;
 use wasm_bindgen::prelude::*;
@@ -21,14 +23,12 @@ use pages::home::home_view::Home;
 
 use percy_dom::prelude::*;
 
-use crate::utility::constants::{
-    DEFAULT_ADDED_DENSITY, DEFAULT_ADDED_VELOCITY, DEFAULT_DIFFUSION, DEFAULT_TIME_STEP,
-};
-
-use fluid_sim::{Fluid, FluidConfig};
+use crate::utility::constants::{DEFAULT_DIFFUSION, DEFAULT_TIME_STEP};
 
 use crate::world::{SimAppWorldWrapper, World};
+use fluid_sim::{Fluid, FluidConfig};
 use percy_dom::{render::create_render_scheduler, VirtualNode};
+use resources::FluidProperySetters;
 
 #[derive(Clone)]
 pub struct SimApp {
@@ -93,16 +93,29 @@ impl WebClient {
 
         let (app2, canvas, nw, nh) = initialise_canvas(app2);
 
-        let fluid = Fluid::new(FluidConfig::new(
+        let fluid = Rc::new(RefCell::new(Fluid::new(FluidConfig::new(
             nw as u16,
             nh as u16,
             DEFAULT_DIFFUSION,
             DEFAULT_TIME_STEP,
-        ));
+        ))));
+
+        let fluid_1 = fluid.clone();
+        let fluid_2 = fluid.clone();
+
+        app2.world
+            .msg(Msg::SetFluidPropertySetters(FluidProperySetters {
+                time_step: Box::new(move |val: f32| {
+                    fluid_1.borrow_mut().set_dt(val);
+                }),
+                diffusion: Box::new(move |val: f32| {
+                    fluid_2.borrow_mut().set_diffusion(val);
+                }),
+            }));
 
         let webgl_data = initialise_webgl(&canvas, nw as f32, nh as f32);
 
-        render_fluid(&webgl_data, &fluid.density);
+        render_fluid(&webgl_data, &fluid.borrow().density);
 
         let render = move || render_app_with_world(&app);
 

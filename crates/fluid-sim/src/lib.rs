@@ -25,14 +25,6 @@ impl FluidConfig {
         }
     }
 
-    pub fn set_diffusion(&mut self, diffusion: f32) {
-        self.diffusion = diffusion
-    }
-
-    pub fn get_diffusion(&self) -> f32 {
-        self.diffusion
-    }
-
     pub fn update_Size(&mut self, nw: u16, nh: u16) {
         self.nw = nw;
         self.nh = nh;
@@ -246,7 +238,11 @@ impl Fluid {
         self.velocity_y.clone()
     }
 
-    pub fn set_config_diffusion(&mut self, value: f32) {
-        self.config.set_diffusion(value)
+    pub fn set_dt(&mut self, dt: f32) {
+        self.config.dt = dt
+    }
+
+    pub fn set_diffusion(&mut self, diffusion: f32) {
+        self.config.diffusion = diffusion
     }
 }

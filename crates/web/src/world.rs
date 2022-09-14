@@ -1,5 +1,5 @@
 use crate::{
-    resources::{RenderFn, Resources},
+    resources::{FluidProperySetters, RenderFn, Resources},
     state::SimAppState,
     utility::enums::FluidProperty,
 };
@@ -16,14 +16,20 @@ pub enum Msg {
     ToggleConfig,
     SetRenderFn(RenderFn),
     SetFluidProperty(FluidProperty),
-    // UpdateFluidSize(u16, u16),
+    SetFluidPropertySetters(FluidProperySetters),
 }
 
 impl World {
     pub fn new(render_fn: RenderFn) -> World {
         World {
             state: SimAppState::new(),
-            resources: Resources { render_fn },
+            resources: Resources {
+                render_fn,
+                fluid_propery_setters: FluidProperySetters {
+                    diffusion: Box::new(|_val: f32| {}),
+                    time_step: Box::new(|_val: f32| {}),
+                },
+            },
         }
     }
     pub fn set_render_fn(&mut self, render_fn: RenderFn) {
@@ -50,18 +56,24 @@ impl AppWorld for World {
             Msg::SetFluidProperty(fluid_prop) => match fluid_prop {
                 FluidProperty::Diffusion(value) => {
                     self.state.config_data.diffusion = value;
-                    // self.state.fluid.config.set_diffusion(value);
+                    (self.resources.fluid_propery_setters.diffusion)(value);
                 }
                 FluidProperty::TimeStep(value) => {
                     self.state.config_data.time_step = value;
-                    // self.state.fluid.config.dt = value;
+                    (self.resources.fluid_propery_setters.time_step)(value);
                 }
-                FluidProperty::Density(value) => self.state.config_data.density = value,
-                FluidProperty::Velocity(value) => self.state.config_data.velocity = value,
+                FluidProperty::Density(value) => {
+                    self.state.config_data.density = value;
+                }
+                FluidProperty::Velocity(value) => {
+                    self.state.config_data.velocity = value;
+                }
             },
-            // Msg::UpdateFluidSize(nw, nh) => {
-            //     self.state.fluid.config.update_Size(nw, nh);
-            // }
+
+            Msg::SetFluidPropertySetters(fluid_propery_setters) => {
+                self.resources
+                    .set_fluid_propery_setters(fluid_propery_setters);
+            }
         }
         (self.resources.render_fn)();
     }
