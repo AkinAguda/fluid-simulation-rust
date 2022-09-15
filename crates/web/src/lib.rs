@@ -7,39 +7,46 @@ mod world;
 
 use std::{cell::RefCell, rc::Rc};
 
-use app_world::AppWorldWrapper;
-use resources::RenderFn;
-use wasm_bindgen::prelude::*;
-use web_sys;
-
+use crate::utility::constants::{DEFAULT_DIFFUSION, DEFAULT_TIME_STEP};
 use crate::utility::{
     functions::initialise_canvas,
     webgl::{initialise_webgl, render_fluid},
 };
-
 use crate::world::Msg;
-
-use pages::home::home_view::Home;
-
-use percy_dom::prelude::*;
-
-use crate::utility::constants::{DEFAULT_DIFFUSION, DEFAULT_TIME_STEP};
-
 use crate::world::{SimAppWorldWrapper, World};
+use app_world::AppWorldWrapper;
 use fluid_sim::{Fluid, FluidConfig};
+use pages::home::home_view::Home;
+use percy_dom::prelude::*;
+use percy_dom::JsCast;
 use percy_dom::{render::create_render_scheduler, VirtualNode};
 use resources::FluidProperySetters;
+use resources::RenderFn;
+use wasm_bindgen::closure::Closure;
+use wasm_bindgen::prelude::*;
+use web_sys::{self};
 
 #[derive(Clone)]
 pub struct SimApp {
     world: SimAppWorldWrapper,
 }
 
+struct RenderLoop {
+    animation_id: Option<i32>,
+    pub closure: Option<Closure<dyn Fn()>>,
+}
+
+impl RenderLoop {
+    fn new(animation_id: Option<i32>, closure: Option<Closure<dyn Fn()>>) -> RenderLoop {
+        RenderLoop {
+            animation_id,
+            closure,
+        }
+    }
+}
+
 #[wasm_bindgen]
 pub struct WebClient {}
-
-// #[wasm_bindgen]
-// pub struct App;
 
 #[wasm_bindgen]
 extern "C" {
@@ -84,6 +91,8 @@ impl WebClient {
         console_error_panic_hook::set_once();
         css_mod::init!();
 
+        let window = web_sys::window().unwrap();
+
         let render = Box::new(|| {});
         let app: SimApp = create_app(render);
         let app2 = app.clone();
@@ -100,22 +109,49 @@ impl WebClient {
             DEFAULT_TIME_STEP,
         ))));
 
-        let fluid_1 = fluid.clone();
-        let fluid_2 = fluid.clone();
+        let fluid_ref_1 = fluid.clone();
+        let fluid_ref_2 = fluid.clone();
 
         app2.world
             .msg(Msg::SetFluidPropertySetters(FluidProperySetters {
                 time_step: Box::new(move |val: f32| {
-                    fluid_1.borrow_mut().set_dt(val);
+                    fluid_ref_1.borrow_mut().set_dt(val);
                 }),
                 diffusion: Box::new(move |val: f32| {
-                    fluid_2.borrow_mut().set_diffusion(val);
+                    fluid_ref_2.borrow_mut().set_diffusion(val);
                 }),
             }));
 
         let webgl_data = initialise_webgl(&canvas, nw as f32, nh as f32);
 
-        render_fluid(&webgl_data, &fluid.borrow().density);
+        let render_loop: Rc<RefCell<RenderLoop>> =
+            Rc::new(RefCell::new(RenderLoop::new(None, None)));
+
+        let closure: Closure<dyn Fn()> = {
+            let render_loop = render_loop.clone();
+            Closure::wrap(Box::new(move || {
+                render_fluid(&webgl_data, &fluid.borrow().density);
+                let mut render_loop = render_loop.borrow_mut();
+                render_loop.animation_id = if let Some(ref closure) = render_loop.closure {
+                    Some(
+                        window
+                            .request_animation_frame(closure.as_ref().unchecked_ref())
+                            .expect("cannot set animation frame"),
+                    )
+                } else {
+                    None
+                }
+            }))
+        };
+
+        let window = web_sys::window().unwrap();
+        let mut render_loop = render_loop.borrow_mut();
+        render_loop.animation_id = Some(
+            window
+                .request_animation_frame(closure.as_ref().unchecked_ref())
+                .expect("cannot set animation frame"),
+        );
+        render_loop.closure = Some(closure);
 
         let render = move || render_app_with_world(&app);
 
