@@ -280,6 +280,8 @@ fn render_to_canvas(webgl_data: &WebGlData) {
 
     context.bind_framebuffer(GL::FRAMEBUFFER, None);
 
+    context.viewport(0, 0, canvas.width() as i32, canvas.height() as i32);
+
     context.draw_arrays(GL::TRIANGLES, 0, 6);
 }
 
