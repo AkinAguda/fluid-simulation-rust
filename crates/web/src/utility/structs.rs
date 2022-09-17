@@ -20,3 +20,19 @@ impl RenderLoop {
         }
     }
 }
+
+pub struct MouseState {
+    pub mouse_down: bool,
+    pub is_dragging: bool,
+    pub pos: (i64, i64),
+}
+
+impl Default for MouseState {
+    fn default() -> Self {
+        MouseState {
+            mouse_down: false,
+            is_dragging: false,
+            pos: (0, 0),
+        }
+    }
+}
