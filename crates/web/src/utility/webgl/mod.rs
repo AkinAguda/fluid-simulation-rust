@@ -91,7 +91,7 @@ pub fn initialise_webgl(canvas: &web_sys::HtmlCanvasElement, nw: f32, nh: f32) -
     context.uniform2f(Some(&image_resolution), nw, nh);
 
     // Populating vertices
-    let mut vertices = Float32Array::new_with_length((nw * nh * 2.0) as u32);
+    let vertices = Float32Array::new_with_length((nw * nh * 2.0) as u32);
     let densities = Float32Array::new_with_length(((nw + 2.0) * (nh + 2.0)) as u32);
     // let density_per_square: Vec<f32> = vec![0.0; (nw * nh * 2.0) as usize];
     let mut point_index: u32 = 0;

@@ -39,5 +39,8 @@ features = [
     "WebGlProgram",
     "WebGlShader",
     "WebGlTexture",
-    "WebGlFramebuffer"
+    "WebGlFramebuffer",
+    "TouchEvent",
+    "TouchList",
+    "Touch"
 ]
