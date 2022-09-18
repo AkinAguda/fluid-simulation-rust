@@ -24,7 +24,7 @@ impl RenderLoop {
 pub struct MouseState {
     pub mouse_down: bool,
     pub is_dragging: bool,
-    pub pos: (i64, i64),
+    pub pos: (f64, f64),
 }
 
 impl Default for MouseState {
@@ -32,7 +32,7 @@ impl Default for MouseState {
         MouseState {
             mouse_down: false,
             is_dragging: false,
-            pos: (0, 0),
+            pos: (0.0, 0.0),
         }
     }
 }

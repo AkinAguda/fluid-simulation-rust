@@ -5,6 +5,7 @@ use crate::{
     components::{menu::menu_view::MenuData, *},
     utility::{enums::FluidProperty, functions::wrld_clbk},
     world::SimAppWorldWrapper,
+    AddPropertiesFn, MouseStateRef,
 };
 
 use crate::world::Msg;
@@ -13,6 +14,7 @@ use menu::menu_view::Menu;
 
 pub struct Home {
     pub world: SimAppWorldWrapper,
+    pub mouse_state: MouseStateRef,
 }
 
 impl View for Home {
@@ -43,7 +45,7 @@ impl View for Home {
                     config_data: &self.world.read().state.config_data,
                 }
             } />
-            <Canvas />
+            <Canvas mouse_state=self.mouse_state.clone() />
         </div>
         }
     }

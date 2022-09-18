@@ -9,9 +9,9 @@ use crate::world::SimAppWorldWrapper;
 use crate::SimApp;
 use fluid_sim::Fluid;
 use num_traits::ToPrimitive;
-use percy_dom::JsCast;
+use percy_dom::{event::MouseEvent, JsCast};
 use wasm_bindgen::closure::Closure;
-use web_sys::{DomRect, MouseEvent, TouchEvent};
+use web_sys::{DomRect, TouchEvent};
 
 fn resize_canvas_to_display_size(canvas: &web_sys::HtmlCanvasElement) -> bool {
     let window = web_sys::window().unwrap();
@@ -31,7 +31,7 @@ fn resize_canvas_to_display_size(canvas: &web_sys::HtmlCanvasElement) -> bool {
     need_resize
 }
 
-fn get_multipliers(x1: f64, x2: f64, y1: f64, y2: f64) -> (i8, i8) {
+pub fn get_multipliers(x1: f64, y1: f64, x2: f64, y2: f64) -> (i8, i8) {
     let mut multipliers: (i8, i8) = (0, 0);
     if x2 - x1 > 0.0 {
         multipliers.0 = 1;
@@ -52,12 +52,12 @@ fn get_multipliers(x1: f64, x2: f64, y1: f64, y2: f64) -> (i8, i8) {
     multipliers
 }
 
-enum InputEvents {
+pub enum InputEvents {
     Mouse(MouseEvent),
     Touch(TouchEvent),
 }
 
-fn get_client_values(event_type: InputEvents) -> (i32, i32) {
+pub fn get_client_values(event_type: InputEvents) -> (i32, i32) {
     match event_type {
         InputEvents::Mouse(event) => (event.client_x(), event.client_y()),
         InputEvents::Touch(event) => {

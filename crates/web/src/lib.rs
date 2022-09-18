@@ -5,10 +5,12 @@ mod state;
 mod utility;
 mod world;
 
-use std::{cell::RefCell, rc::Rc};
-
 use crate::utility::constants::{DEFAULT_DIFFUSION, DEFAULT_TIME_STEP};
-use crate::utility::{functions::initialise_canvas, webgl::initialise_webgl};
+use crate::utility::structs::{ConfigData, MouseState};
+use crate::utility::{
+    functions::{get_multipliers, initialise_canvas},
+    webgl::initialise_webgl,
+};
 use crate::world::Msg;
 use crate::world::{SimAppWorldWrapper, World};
 use app_world::AppWorldWrapper;
@@ -18,6 +20,7 @@ use percy_dom::prelude::*;
 use percy_dom::{render::create_render_scheduler, VirtualNode};
 use resources::FluidProperySetters;
 use resources::RenderFn;
+use std::{cell::RefCell, rc::Rc};
 use utility::functions::start_animation_loop;
 use wasm_bindgen::prelude::*;
 use web_sys;
@@ -52,10 +55,11 @@ fn create_dom_updater() -> PercyDom {
     pdom
 }
 
-fn render_app_with_world(app: &SimApp) -> VirtualNode {
+fn render_app_with_world(app: &SimApp, mouse_state: MouseStateRef) -> VirtualNode {
     let app_2 = app.clone();
     Home {
         world: app_2.world.clone(),
+        mouse_state,
     }
     .render()
 }
@@ -65,6 +69,10 @@ fn create_app(render: RenderFn) -> SimApp {
         world: AppWorldWrapper::new(World::new(render)),
     }
 }
+
+pub type MouseStateRef = Rc<RefCell<MouseState>>;
+
+pub type AddPropertiesFn = Rc<dyn Fn((i32, i32), (i32, i32)) -> ()>;
 
 #[wasm_bindgen]
 impl WebClient {
@@ -76,9 +84,12 @@ impl WebClient {
         let render = Box::new(|| {});
         let app: SimApp = create_app(render);
         let app2 = app.clone();
+        let app_ref_3 = app.clone();
         let mut pdom = create_dom_updater();
 
-        pdom.update(render_app_with_world(&app));
+        let mouse_state: MouseStateRef = Rc::new(RefCell::new(MouseState::default()));
+
+        pdom.update(render_app_with_world(&app, mouse_state.clone()));
 
         let (app2, canvas, nw, nh) = initialise_canvas(app2);
 
@@ -91,6 +102,7 @@ impl WebClient {
 
         let fluid_ref_1 = fluid.clone();
         let fluid_ref_2 = fluid.clone();
+        let fluid_ref_3 = fluid.clone();
 
         app2.world
             .msg(Msg::SetFluidPropertySetters(FluidProperySetters {
@@ -102,11 +114,41 @@ impl WebClient {
                 }),
             }));
 
+        let mouse_state_ref = mouse_state.clone();
+        let canvas_ref = &canvas;
+        let add_properties_from_mouse_loc = move |coords: (i32, i32), client_values: (i32, i32)| {
+            let ConfigData {
+                velocity, density, ..
+            } = app_ref_3.world.read().state.config_data;
+
+            let rect = canvas_ref.get_bounding_client_rect();
+
+            let event_x = client_values.0 as f64 - rect.left();
+            let event_y = client_values.1 as f64 - rect.top();
+
+            let prev_pos = mouse_state_ref.borrow().pos;
+
+            let (multi_x, multi_y) = get_multipliers(prev_pos.0, prev_pos.1, event_x, event_y);
+
+            fluid_ref_3.borrow_mut().add_velocity(
+                fluid_ref_3.borrow().ix(coords.0 as u16, coords.1 as u16) as usize,
+                velocity * multi_x as f32,
+                velocity * multi_y as f32,
+            );
+
+            fluid_ref_3.borrow_mut().add_density(
+                fluid_ref_3.borrow().ix(coords.0 as u16, coords.1 as u16) as usize,
+                density,
+            );
+
+            mouse_state_ref.borrow_mut().pos = (event_x, event_y);
+        };
+
         let webgl_data = initialise_webgl(&canvas, nw as f32, nh as f32);
 
         start_animation_loop(webgl_data, fluid.clone());
 
-        let render = move || render_app_with_world(&app);
+        let render = move || render_app_with_world(&app, mouse_state.clone());
 
         let render = create_render_scheduler(pdom, render);
 
