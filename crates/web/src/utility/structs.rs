@@ -36,3 +36,11 @@ impl Default for MouseState {
         }
     }
 }
+
+impl MouseState {
+    pub fn reset(&mut self) {
+        self.mouse_down = false;
+        self.is_dragging = false;
+        self.pos = (0.0, 0.0);
+    }
+}

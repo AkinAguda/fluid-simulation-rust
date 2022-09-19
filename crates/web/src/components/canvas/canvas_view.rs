@@ -1,5 +1,3 @@
-use std::rc::Rc;
-
 use percy_dom::{event::MouseEvent, *};
 
 use crate::{
@@ -7,48 +5,50 @@ use crate::{
     utility::{
         constants::CANVAS_ID,
         functions::{get_client_values, InputEvents},
+        structs::MouseState,
     },
-    MouseStateRef,
+    AddPropertiesFn, MouseStateRef,
 };
 
-pub struct Canvas {
+pub struct CanvasData {
     pub mouse_state: MouseStateRef,
+    pub add_properties_from_mouse_loc: AddPropertiesFn,
+}
+
+pub struct Canvas {
+    pub data: CanvasData,
 }
 
 impl View for Canvas {
     fn render(&self) -> VirtualNode {
         let css = css_mod::get!("canvas.css");
 
-        let mouse_state_ref_1 = self.mouse_state.clone();
-        let mouse_state_ref_2 = self.mouse_state.clone();
-        let mouse_state_ref_3 = self.mouse_state.clone();
+        let mouse_state_ref_1 = self.data.mouse_state.clone();
+        let mouse_state_ref_2 = self.data.mouse_state.clone();
+        let mouse_state_ref_3 = self.data.mouse_state.clone();
 
-        let onclick: Box<dyn Fn(MouseEvent) -> ()> = Box::new(move |event: MouseEvent| {
-            let (client_x, client_y) = get_client_values(InputEvents::Mouse(event));
-            mouse_state_ref_1.borrow_mut().is_dragging = true;
-        });
+        let add_properties_from_mouse_loc_ref_1 = self.data.add_properties_from_mouse_loc.clone();
 
-        let onmousedown = |event: MouseEvent| {
+        let onclick = move |event: MouseEvent| {
+            (add_properties_from_mouse_loc_ref_1)(get_client_values(InputEvents::Mouse(event)));
+        };
+
+        let onmousedown = move || {
             mouse_state_ref_2.borrow_mut().mouse_down = true;
         };
 
-        let onmousemove = |event: MouseEvent| {
-            if mouse_state_ref_3.borrow().mouse_down {
-                mouse_state_ref_2.borrow_mut().mouse_down = true;
-                let (client_x, client_y) = get_client_values(InputEvents::Mouse(event));
-            }
+        let onmouseup = move || {
+            mouse_state_ref_1.borrow_mut().reset();
         };
 
-        // handleEvent = (x: number, y: number, clientX: number, clientY: number) => {
-        //     if (this.mode === 0) {
-        //       this.addV(x, y, clientX, clientY);
-        //       this.addD(x, y);
-        //     } else if (this.mode === 1) {
-        //       this.addV(x, y, clientX, clientY);
-        //     } else if (this.mode === 2) {
-        //       this.addD(x, y);
-        //     }
-        //   };
+        let onmousemove = move |event: MouseEvent| {
+            if mouse_state_ref_3.borrow().mouse_down {
+                mouse_state_ref_3.borrow_mut().mouse_down = true;
+                (self.data.add_properties_from_mouse_loc)(get_client_values(InputEvents::Mouse(
+                    event,
+                )));
+            }
+        };
 
         html! {
             <canvas
@@ -58,11 +58,14 @@ impl View for Canvas {
                 onclick=move |event: MouseEvent| {
                     (onclick)(event);
                 }
-                onmousedown=move |event: MouseEvent| {
-                    (onmousedown)(event);
+                onmousedown=move || {
+                    (onmousedown)();
                 }
                 onmousemove=move |event: MouseEvent| {
                     (onmousemove)(event);
+                }
+                onmouseup=move || {
+                    (onmouseup)();
                 }
             >
             /canvas>

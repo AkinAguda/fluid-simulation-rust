@@ -57,18 +57,24 @@ pub enum InputEvents {
     Touch(TouchEvent),
 }
 
-pub fn get_client_values(event_type: InputEvents) -> (i32, i32) {
+pub fn get_client_values(event_type: InputEvents) -> (f64, f64) {
     match event_type {
-        InputEvents::Mouse(event) => (event.client_x(), event.client_y()),
+        InputEvents::Mouse(event) => (event.client_x() as f64, event.client_y() as f64),
         InputEvents::Touch(event) => {
             let touches = event.touches();
             let touch = touches.item(touches.length() - 1).unwrap();
-            (touch.client_x(), touch.client_y())
+            (touch.client_x() as f64, touch.client_y() as f64)
         }
     }
 }
 
-fn get_event_location(nw: f64, nh: f64, rect: DomRect, client_x: f64, client_y: f64) -> (f64, f64) {
+pub fn get_event_location(
+    nw: f64,
+    nh: f64,
+    rect: &DomRect,
+    client_x: f64,
+    client_y: f64,
+) -> (f64, f64) {
     let x = client_x - rect.left();
     let y = client_y - rect.top();
     let h_ratio = nh / rect.height();

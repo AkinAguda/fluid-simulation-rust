@@ -2,7 +2,7 @@ use percy_dom::*;
 use std::rc::Rc;
 
 use crate::{
-    components::{menu::menu_view::MenuData, *},
+    components::{canvas::canvas_view::CanvasData, menu::menu_view::MenuData, *},
     utility::{enums::FluidProperty, functions::wrld_clbk},
     world::SimAppWorldWrapper,
     AddPropertiesFn, MouseStateRef,
@@ -15,6 +15,7 @@ use menu::menu_view::Menu;
 pub struct Home {
     pub world: SimAppWorldWrapper,
     pub mouse_state: MouseStateRef,
+    pub add_properties_from_mouse_loc: AddPropertiesFn,
 }
 
 impl View for Home {
@@ -45,7 +46,15 @@ impl View for Home {
                     config_data: &self.world.read().state.config_data,
                 }
             } />
-            <Canvas mouse_state=self.mouse_state.clone() />
+
+            <Canvas
+                data={
+                    CanvasData {
+                        mouse_state: self.mouse_state.clone(),
+                        add_properties_from_mouse_loc: self.add_properties_from_mouse_loc.clone()
+                    }
+                }
+            />
         </div>
         }
     }
