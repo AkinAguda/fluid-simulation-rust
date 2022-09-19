@@ -1,3 +1,5 @@
+use std::cell::RefCell;
+
 use js_sys::Float32Array;
 use web_sys::{WebGlBuffer, WebGlProgram, WebGlRenderingContext, WebGlTexture};
 
@@ -6,7 +8,7 @@ pub struct WebGlData {
     pub nh: i32,
     pub context: WebGlRenderingContext,
     pub vertices: Float32Array,
-    pub densities: Float32Array,
+    pub densities: RefCell<Float32Array>,
     pub position_attribute_location: i32,
     pub density_attribute_location: i32,
     pub pos_attribute_location: i32,

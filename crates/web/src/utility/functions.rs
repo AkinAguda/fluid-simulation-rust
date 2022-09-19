@@ -9,9 +9,9 @@ use crate::world::SimAppWorldWrapper;
 use crate::SimApp;
 use fluid_sim::Fluid;
 use num_traits::ToPrimitive;
-use percy_dom::{event::MouseEvent, JsCast};
+use percy_dom::JsCast;
 use wasm_bindgen::closure::Closure;
-use web_sys::{DomRect, TouchEvent};
+use web_sys::{DomRect, MouseEvent, TouchEvent};
 
 fn resize_canvas_to_display_size(canvas: &web_sys::HtmlCanvasElement) -> bool {
     let window = web_sys::window().unwrap();
@@ -128,11 +128,12 @@ pub fn wrld_clbk<T>(world: &SimAppWorldWrapper, f: impl FnOnce(SimAppWorldWrappe
 
 pub fn start_animation_loop(webgl_data: WebGlData, fluid: Rc<RefCell<Fluid>>) {
     let render_loop: Rc<RefCell<RenderLoop>> = Rc::new(RefCell::new(RenderLoop::new(None, None)));
-
+    let fluid_clone = fluid.clone();
     let closure: Closure<dyn Fn()> = {
         let window = web_sys::window().unwrap();
         let render_loop = render_loop.clone();
         Closure::wrap(Box::new(move || {
+            // fluid_clone.borrow_mut().simulate();
             render_fluid(&webgl_data, &fluid.borrow().density);
             let mut render_loop = render_loop.borrow_mut();
             render_loop.animation_id = if let Some(ref closure) = render_loop.closure {

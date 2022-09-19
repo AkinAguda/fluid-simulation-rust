@@ -24,7 +24,7 @@ use resources::RenderFn;
 use std::{cell::RefCell, rc::Rc};
 use utility::functions::start_animation_loop;
 use wasm_bindgen::prelude::*;
-use web_sys::{self, DomRect};
+use web_sys::{self};
 
 #[derive(Clone)]
 pub struct SimApp {
@@ -150,23 +150,22 @@ impl WebClient {
 
             let (multi_x, multi_y) = get_multipliers(prev_pos.0, prev_pos.1, event_x, event_y);
 
+            let property_index = fluid_ref_3.borrow().ix(coords.0 as u16, coords.1 as u16) as usize;
+
             fluid_ref_3.borrow_mut().add_velocity(
-                fluid_ref_3.borrow().ix(coords.0 as u16, coords.1 as u16) as usize,
+                property_index,
                 velocity * multi_x as f32,
                 velocity * multi_y as f32,
             );
 
-            fluid_ref_3.borrow_mut().add_density(
-                fluid_ref_3.borrow().ix(coords.0 as u16, coords.1 as u16) as usize,
-                density,
-            );
+            fluid_ref_3
+                .borrow_mut()
+                .add_density(property_index, density);
 
             mouse_state_ref.borrow_mut().pos = (event_x, event_y);
         });
 
         let webgl_data = initialise_webgl(&canvas, nw as f32, nh as f32);
-
-        start_animation_loop(webgl_data, fluid.clone());
 
         let render = move || {
             render_app_with_world(
@@ -179,6 +178,8 @@ impl WebClient {
         let render = create_render_scheduler(pdom, render);
 
         app2.world.msg(Msg::SetRenderFn(render));
+
+        start_animation_loop(webgl_data, fluid.clone());
 
         WebClient {}
     }

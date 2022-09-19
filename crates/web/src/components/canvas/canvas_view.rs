@@ -1,3 +1,5 @@
+use std::ops::Deref;
+
 use percy_dom::{event::MouseEvent, *};
 
 use crate::{
@@ -28,8 +30,9 @@ impl View for Canvas {
         let mouse_state_ref_3 = self.data.mouse_state.clone();
 
         let add_properties_from_mouse_loc_ref_1 = self.data.add_properties_from_mouse_loc.clone();
+        let add_properties_from_mouse_loc_ref_2 = self.data.add_properties_from_mouse_loc.clone();
 
-        let onclick = move |event: MouseEvent| {
+        let onclick = move |event: web_sys::MouseEvent| {
             (add_properties_from_mouse_loc_ref_1)(get_client_values(InputEvents::Mouse(event)));
         };
 
@@ -41,12 +44,11 @@ impl View for Canvas {
             mouse_state_ref_1.borrow_mut().reset();
         };
 
-        let onmousemove = move |event: MouseEvent| {
-            if mouse_state_ref_3.borrow().mouse_down {
+        let onmousemove = move |event: web_sys::MouseEvent| {
+            let md = mouse_state_ref_3.borrow().mouse_down;
+            if md {
                 mouse_state_ref_3.borrow_mut().mouse_down = true;
-                (self.data.add_properties_from_mouse_loc)(get_client_values(InputEvents::Mouse(
-                    event,
-                )));
+                (add_properties_from_mouse_loc_ref_2)(get_client_values(InputEvents::Mouse(event)));
             }
         };
 
@@ -56,12 +58,12 @@ impl View for Canvas {
                 key=CANVAS_ID
                 class=css["canvas"]
                 onclick=move |event: MouseEvent| {
-                    (onclick)(event);
+                    (onclick)(event.deref().clone());
                 }
                 onmousedown=move || {
                     (onmousedown)();
                 }
-                onmousemove=move |event: MouseEvent| {
+                onmousemove=move |event: web_sys::MouseEvent| {
                     (onmousemove)(event);
                 }
                 onmouseup=move || {

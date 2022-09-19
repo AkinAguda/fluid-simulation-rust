@@ -1,7 +1,10 @@
+use std::cell::RefCell;
+
 use super::constants::{FRAGMENT_SHADER_1, FRAGMENT_SHADER_2, VERTEX_SHADER_1, VERTEX_SHADER_2};
 use super::structs::WebGlData;
 use js_sys::Float32Array;
 use percy_dom::JsCast;
+use wasm_bindgen::prelude::*;
 use web_sys::{WebGlProgram, WebGlRenderingContext as GL, WebGlShader, WebGlTexture};
 
 pub fn create_shader(context: &GL, shader_type: u32, source: &str) -> Result<WebGlShader, String> {
@@ -20,6 +23,18 @@ pub fn create_shader(context: &GL, shader_type: u32, source: &str) -> Result<Web
         context.delete_shader(Some(&shader));
         err
     }
+}
+
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = console)]
+    fn log(s: &str);
+
+    #[wasm_bindgen(js_namespace = console, js_name = log)]
+    fn log_u32(a: u32);
+
+    #[wasm_bindgen(js_namespace = console, js_name = log)]
+    fn log_many(a: &str, b: &str);
 }
 
 pub fn create_program(
@@ -182,7 +197,11 @@ pub fn render_to_texture(webgl_data: &WebGlData) -> WebGlTexture {
 
     context.bind_buffer(GL::ARRAY_BUFFER, Some(&density_buffer));
 
-    context.buffer_data_with_array_buffer_view(GL::ARRAY_BUFFER, &densities, GL::STATIC_DRAW);
+    context.buffer_data_with_array_buffer_view(
+        GL::ARRAY_BUFFER,
+        &densities.borrow(),
+        GL::STATIC_DRAW,
+    );
 
     context.bind_buffer(GL::ARRAY_BUFFER, Some(&position_buffer));
 
@@ -287,8 +306,9 @@ pub fn initialise_webgl(canvas: &web_sys::HtmlCanvasElement, nw: f32, nh: f32) -
 
     // Populating vertices
     let vertices = Float32Array::new_with_length((nw * nh * 2.0) as u32);
-    let densities = Float32Array::new_with_length(((nw + 2.0) * (nh + 2.0)) as u32);
-    // let density_per_square: Vec<f32> = vec![0.0; (nw * nh * 2.0) as usize];
+    let densities = RefCell::new(Float32Array::new_with_length(
+        ((nw + 2.0) * (nh + 2.0)) as u32,
+    ));
     let mut point_index: u32 = 0;
     const HALF_SQUARE: f32 = 0.5;
 
@@ -321,10 +341,12 @@ pub fn initialise_webgl(canvas: &web_sys::HtmlCanvasElement, nw: f32, nh: f32) -
 }
 
 pub fn render_fluid(webgl_data: &WebGlData, fluid_density: &Vec<f32>) {
-    /* Maybe in future, the fluid-sim could use the `Float32Array` from js_sys
-    instead of needing to do this copy. This copy is hopefully more performant
-    than the one done in the Ts <-> WASM one */
-    webgl_data.densities.copy_from(fluid_density);
-    render_to_texture(&webgl_data);
-    render_to_canvas(&webgl_data);
+    /* This is unsafe because I am copying an f32 vec into Float32Array */
+    unsafe {
+        webgl_data
+            .densities
+            .replace(Float32Array::view(fluid_density));
+        render_to_texture(&webgl_data);
+        render_to_canvas(&webgl_data);
+    }
 }
