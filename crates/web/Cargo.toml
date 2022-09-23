@@ -42,5 +42,7 @@ features = [
     "WebGlFramebuffer",
     "TouchEvent",
     "TouchList",
-    "Touch"
+    "Touch",
+    "Performance",
+    "PerformanceTiming"
 ]

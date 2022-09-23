@@ -1,6 +1,3 @@
-use std::cell::RefCell;
-use std::rc::Rc;
-
 use super::structs::RenderLoop;
 use super::webgl::render_fluid;
 use super::webgl::structs::WebGlData;
@@ -10,8 +7,24 @@ use crate::SimApp;
 use fluid_sim::Fluid;
 use num_traits::ToPrimitive;
 use percy_dom::JsCast;
+use std::cell::RefCell;
+use std::rc::Rc;
+use std::time::{Duration, SystemTime, UNIX_EPOCH};
 use wasm_bindgen::closure::Closure;
+use wasm_bindgen::prelude::*;
 use web_sys::{DomRect, MouseEvent, TouchEvent};
+
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = console)]
+    fn log(s: &str);
+
+    #[wasm_bindgen(js_namespace = console, js_name = log)]
+    fn log_u32(a: u32);
+
+    #[wasm_bindgen(js_namespace = console, js_name = log)]
+    fn log_many(a: &str, b: &str);
+}
 
 fn resize_canvas_to_display_size(canvas: &web_sys::HtmlCanvasElement) -> bool {
     let window = web_sys::window().unwrap();
@@ -86,6 +99,7 @@ pub fn get_event_location(
 
 pub fn get_grid_dimensions(width: u32, height: u32) -> (u32, u32) {
     let mut count: u32 = 220;
+    return (180, 180);
     let div = (u32::max(width, height) / u32::min(width, height)) as f32;
     if div as f32 <= 1.5 {
         count = 180;
@@ -103,6 +117,12 @@ pub fn get_grid_dimensions(width: u32, height: u32) -> (u32, u32) {
     } else {
         (count, count)
     }
+}
+
+fn perf_to_system(amt: f64) -> SystemTime {
+    let secs = (amt as u64) / 1_000;
+    let nanos = (((amt as u64) % 1_000) as u32) * 1_000_000;
+    UNIX_EPOCH + Duration::new(secs, nanos)
 }
 
 pub fn initialise_canvas(app: SimApp) -> (SimApp, web_sys::HtmlCanvasElement, u32, u32) {
@@ -129,11 +149,12 @@ pub fn wrld_clbk<T>(world: &SimAppWorldWrapper, f: impl FnOnce(SimAppWorldWrappe
 pub fn start_animation_loop(webgl_data: WebGlData, fluid: Rc<RefCell<Fluid>>) {
     let render_loop: Rc<RefCell<RenderLoop>> = Rc::new(RefCell::new(RenderLoop::new(None, None)));
     let fluid_clone = fluid.clone();
+    let window = web_sys::window().unwrap();
+    log("I should log once");
     let closure: Closure<dyn Fn()> = {
-        let window = web_sys::window().unwrap();
         let render_loop = render_loop.clone();
         Closure::wrap(Box::new(move || {
-            // fluid_clone.borrow_mut().simulate();
+            fluid_clone.borrow_mut().simulate();
             render_fluid(&webgl_data, &fluid.borrow().density);
             let mut render_loop = render_loop.borrow_mut();
             render_loop.animation_id = if let Some(ref closure) = render_loop.closure {

@@ -4,6 +4,19 @@ use crate::{
     utility::enums::FluidProperty,
 };
 use app_world::{AppWorld, AppWorldWrapper};
+use wasm_bindgen::prelude::*;
+
+#[wasm_bindgen]
+extern "C" {
+    #[wasm_bindgen(js_namespace = console)]
+    fn log(s: &str);
+
+    #[wasm_bindgen(js_namespace = console, js_name = log)]
+    fn log_u32(a: u32);
+
+    #[wasm_bindgen(js_namespace = console, js_name = log)]
+    fn log_many(a: &str, b: &str);
+}
 
 pub struct World {
     pub state: SimAppState,
