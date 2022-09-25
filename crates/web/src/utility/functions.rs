@@ -9,7 +9,6 @@ use num_traits::ToPrimitive;
 use percy_dom::JsCast;
 use std::cell::RefCell;
 use std::rc::Rc;
-use std::time::{Duration, SystemTime, UNIX_EPOCH};
 use wasm_bindgen::closure::Closure;
 use wasm_bindgen::prelude::*;
 use web_sys::{DomRect, MouseEvent, TouchEvent};
@@ -99,7 +98,6 @@ pub fn get_event_location(
 
 pub fn get_grid_dimensions(width: u32, height: u32) -> (u32, u32) {
     let mut count: u32 = 220;
-    return (180, 180);
     let div = (u32::max(width, height) / u32::min(width, height)) as f32;
     if div as f32 <= 1.5 {
         count = 180;
@@ -117,12 +115,6 @@ pub fn get_grid_dimensions(width: u32, height: u32) -> (u32, u32) {
     } else {
         (count, count)
     }
-}
-
-fn perf_to_system(amt: f64) -> SystemTime {
-    let secs = (amt as u64) / 1_000;
-    let nanos = (((amt as u64) % 1_000) as u32) * 1_000_000;
-    UNIX_EPOCH + Duration::new(secs, nanos)
 }
 
 pub fn initialise_canvas(app: SimApp) -> (SimApp, web_sys::HtmlCanvasElement, u32, u32) {
@@ -150,7 +142,6 @@ pub fn start_animation_loop(webgl_data: WebGlData, fluid: Rc<RefCell<Fluid>>) {
     let render_loop: Rc<RefCell<RenderLoop>> = Rc::new(RefCell::new(RenderLoop::new(None, None)));
     let fluid_clone = fluid.clone();
     let window = web_sys::window().unwrap();
-    log("I should log once");
     let closure: Closure<dyn Fn()> = {
         let render_loop = render_loop.clone();
         Closure::wrap(Box::new(move || {

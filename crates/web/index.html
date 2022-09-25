@@ -19,14 +19,7 @@
 
       async function run() {
         await init("/web_bg.wasm");
-        let wc = new WebClient();
-
-        const d = () => {
-          wc.draw();
-          requestAnimationFrame(d);
-        };
-
-        requestAnimationFrame(d);
+        new WebClient();
       }
 
       run();

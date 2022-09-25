@@ -10,7 +10,7 @@ use crate::utility::functions::get_event_location;
 use crate::utility::structs::{ConfigData, MouseState};
 use crate::utility::{
     functions::{get_multipliers, initialise_canvas},
-    webgl::{initialise_webgl, render_fluid},
+    webgl::initialise_webgl,
 };
 use crate::world::Msg;
 use crate::world::{SimAppWorldWrapper, World};
@@ -24,7 +24,6 @@ use resources::RenderFn;
 use std::{cell::RefCell, rc::Rc};
 use utility::functions::start_animation_loop;
 use wasm_bindgen::prelude::*;
-use web_sys::{self};
 
 #[derive(Clone)]
 pub struct SimApp {
@@ -32,9 +31,7 @@ pub struct SimApp {
 }
 
 #[wasm_bindgen]
-pub struct WebClient {
-    fluid_draw: Box<dyn Fn()>,
-}
+pub struct WebClient {}
 
 #[wasm_bindgen]
 extern "C" {
@@ -181,20 +178,8 @@ impl WebClient {
 
         app2.world.msg(Msg::SetRenderFn(render));
 
-        let fluid_clone = fluid.clone();
+        start_animation_loop(webgl_data, fluid.clone());
 
-        let l = move || {
-            fluid_clone.borrow_mut().simulate();
-            render_fluid(&webgl_data, &fluid.borrow().density);
-        };
-
-        WebClient {
-            fluid_draw: Box::new(l),
-        }
-    }
-
-    #[wasm_bindgen]
-    pub fn draw(&mut self) {
-        (self.fluid_draw)();
+        WebClient {}
     }
 }

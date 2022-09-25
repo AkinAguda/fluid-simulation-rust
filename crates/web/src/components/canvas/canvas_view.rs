@@ -3,11 +3,9 @@ use std::ops::Deref;
 use percy_dom::{event::MouseEvent, *};
 
 use crate::{
-    log,
     utility::{
         constants::CANVAS_ID,
         functions::{get_client_values, InputEvents},
-        structs::MouseState,
     },
     AddPropertiesFn, MouseStateRef,
 };

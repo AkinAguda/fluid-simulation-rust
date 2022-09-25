@@ -24,12 +24,6 @@ impl FluidConfig {
             dt,
         }
     }
-
-    pub fn update_Size(&mut self, nw: u16, nh: u16) {
-        self.nw = nw;
-        self.nh = nh;
-        self.size = (nw + 2) * (nh + 2);
-    }
 }
 
 pub struct Fluid {
