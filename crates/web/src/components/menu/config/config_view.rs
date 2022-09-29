@@ -15,6 +15,7 @@ pub struct ConfigComponentData {
     pub diffusion: f32,
     pub set_fluid_property: Rc<dyn Fn(FluidProperty) -> ()>,
     pub clear_fluid: ClearFluidFn,
+    pub reset_config: Rc<dyn Fn()>,
 }
 
 pub struct Config {
@@ -40,6 +41,7 @@ impl View for Config {
         let set_diffusion = self.get_property_updater(Rc::new(|val| FluidProperty::Diffusion(val)));
 
         let clear_fluid = self.data.clear_fluid.clone();
+        let reset_config = self.data.reset_config.clone();
 
         let ranges = vec![
             Range {
@@ -97,7 +99,10 @@ impl View for Config {
                     class=css["config-button"]>Clear</button>
                 </li>
                 <li>
-                    <button class=css["config-button"]>Reset</button>
+                    <button onclick=move || {
+                        (reset_config)()
+                    }
+                    class=css["config-button"]>Reset</button>
                 </li>
             </ul>
         }

@@ -32,6 +32,10 @@ impl View for Home {
             Rc::new(move |property: FluidProperty| world.msg(Msg::SetFluidProperty(property)))
         });
 
+        let reset_config = wrld_clbk(&self.world, |world| {
+            Rc::new(move || world.msg(Msg::ResetConfig))
+        });
+
         html! {
         <div class=css["wrapper"]>
             <div class=css["intro"]>
@@ -45,7 +49,8 @@ impl View for Home {
                     toggle_config,
                     set_fluid_property,
                     config_data: &self.world.read().state.config_data,
-                    clear_fluid: self.clear_fluid.clone()
+                    clear_fluid: self.clear_fluid.clone(),
+                    reset_config: reset_config
                 }
             } />
 

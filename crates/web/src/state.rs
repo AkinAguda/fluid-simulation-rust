@@ -1,6 +1,3 @@
-use crate::utility::constants::{
-    DEFAULT_ADDED_DENSITY, DEFAULT_ADDED_VELOCITY, DEFAULT_DIFFUSION, DEFAULT_TIME_STEP,
-};
 use crate::utility::structs::ConfigData;
 
 pub struct SimAppState {
@@ -12,12 +9,7 @@ impl SimAppState {
     pub fn new() -> SimAppState {
         SimAppState {
             config_open: true,
-            config_data: ConfigData {
-                time_step: DEFAULT_TIME_STEP,
-                diffusion: DEFAULT_DIFFUSION,
-                density: DEFAULT_ADDED_DENSITY,
-                velocity: DEFAULT_ADDED_VELOCITY,
-            },
+            config_data: ConfigData::default(),
         }
     }
 

@@ -30,6 +30,7 @@ pub enum Msg {
     SetRenderFn(RenderFn),
     SetFluidProperty(FluidProperty),
     SetFluidPropertySetters(FluidProperySetters),
+    ResetConfig,
 }
 
 impl World {
@@ -86,6 +87,10 @@ impl AppWorld for World {
             Msg::SetFluidPropertySetters(fluid_propery_setters) => {
                 self.resources
                     .set_fluid_propery_setters(fluid_propery_setters);
+            }
+
+            Msg::ResetConfig => {
+                self.state.config_data.reset();
             }
         }
         (self.resources.render_fn)();

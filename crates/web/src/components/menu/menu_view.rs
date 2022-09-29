@@ -17,6 +17,7 @@ pub struct MenuData<'a> {
     pub config_data: &'a ConfigData,
     pub open: bool,
     pub clear_fluid: ClearFluidFn,
+    pub reset_config: Rc<dyn Fn()>,
 }
 
 pub struct Menu<'a> {
@@ -40,7 +41,8 @@ impl<'a> View for Menu<'a> {
                             density: self.data.config_data.density,
                             diffusion: self.data.config_data.diffusion,
                             set_fluid_property: self.data.set_fluid_property.clone(),
-                            clear_fluid: self.data.clear_fluid.clone()
+                            clear_fluid: self.data.clear_fluid.clone(),
+                            reset_config: self.data.reset_config.clone()
                         }
                     }
                 />
