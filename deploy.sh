@@ -1,7 +1,7 @@
 #!/bin/bash
 
 echo -e "\e[1;33m BUILDING... Installing and setting up cargo \e[0m"
-curl https://sh.rustup.rs -sSf -y | sh &&
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 rustup install stable &&
 rustup default stable &&
 echo -e "\e[1;32m BUILDING... Cargo Installed sucessfully \e[0m"
