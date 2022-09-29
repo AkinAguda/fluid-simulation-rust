@@ -39,9 +39,9 @@ impl View for Home {
         html! {
         <div class=css["wrapper"]>
             <div class=css["intro"]>
-                <h1>Fluid SImulation</h1>
-                <h2>With the <a href="https://en.wikipedia.org/wiki/Navier%E2%80%93Stokes_equations" target="_blank">Navier Stokes Equations</a></h2>
-                <a href="https://github.com/AkinAguda/fluid-simulation-rust" target="_blank">See on Github</a>
+                <h1>{"Fluid SImulation"}</h1>
+                <h2>With the <a href="https://en.wikipedia.org/wiki/Navier%E2%80%93Stokes_equations" target="_blank">{"Navier Stokes Equations"}</a></h2>
+                <a href="https://github.com/AkinAguda/fluid-simulation-rust" target="_blank">{"See on Github"}</a>
             </div>
             <Menu data={
                 MenuData {
