@@ -5,7 +5,7 @@ use crate::{
     components::{canvas::canvas_view::CanvasData, menu::menu_view::MenuData, *},
     utility::{enums::FluidProperty, functions::wrld_clbk},
     world::SimAppWorldWrapper,
-    AddPropertiesFn, MouseStateRef,
+    AddPropertiesFn, ClearFluidFn, MouseStateRef,
 };
 
 use crate::world::Msg;
@@ -16,6 +16,7 @@ pub struct Home {
     pub world: SimAppWorldWrapper,
     pub mouse_state: MouseStateRef,
     pub add_properties_from_mouse_loc: AddPropertiesFn,
+    pub clear_fluid: ClearFluidFn,
 }
 
 impl View for Home {
@@ -44,6 +45,7 @@ impl View for Home {
                     toggle_config,
                     set_fluid_property,
                     config_data: &self.world.read().state.config_data,
+                    clear_fluid: self.clear_fluid.clone()
                 }
             } />
 
@@ -51,7 +53,7 @@ impl View for Home {
                 data={
                     CanvasData {
                         mouse_state: self.mouse_state.clone(),
-                        add_properties_from_mouse_loc: self.add_properties_from_mouse_loc.clone()
+                        add_properties_from_mouse_loc: self.add_properties_from_mouse_loc.clone(),
                     }
                 }
             />

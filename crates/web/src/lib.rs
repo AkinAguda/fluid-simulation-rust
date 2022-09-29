@@ -59,12 +59,14 @@ fn render_app_with_world(
     app: &SimApp,
     mouse_state: MouseStateRef,
     add_properties_from_mouse_loc: AddPropertiesFn,
+    clear_fluid: ClearFluidFn,
 ) -> VirtualNode {
     let app_2 = app.clone();
     Home {
         world: app_2.world.clone(),
         mouse_state,
         add_properties_from_mouse_loc,
+        clear_fluid,
     }
     .render()
 }
@@ -78,6 +80,8 @@ fn create_app(render: RenderFn) -> SimApp {
 pub type MouseStateRef = Rc<RefCell<MouseState>>;
 
 pub type AddPropertiesFn = Rc<dyn Fn((f64, f64)) -> ()>;
+
+pub type ClearFluidFn = Rc<dyn Fn()>;
 
 #[wasm_bindgen]
 impl WebClient {
@@ -98,6 +102,7 @@ impl WebClient {
             &app,
             mouse_state.clone(),
             Rc::new(|_: (f64, f64)| {}),
+            Rc::new(|| {}),
         ));
 
         let (app2, canvas, nw, nh) = initialise_canvas(app2);
@@ -112,6 +117,7 @@ impl WebClient {
         let fluid_ref_1 = fluid.clone();
         let fluid_ref_2 = fluid.clone();
         let fluid_ref_3 = fluid.clone();
+        let fluid_ref_4 = fluid.clone();
 
         app2.world
             .msg(Msg::SetFluidPropertySetters(FluidProperySetters {
@@ -166,11 +172,14 @@ impl WebClient {
 
         let webgl_data = initialise_webgl(&canvas, nw as f32, nh as f32);
 
+        let clear_fn = Rc::new(move || fluid_ref_4.borrow_mut().clear());
+
         let render = move || {
             render_app_with_world(
                 &app,
                 mouse_state.clone(),
                 add_properties_from_mouse_loc.clone(),
+                clear_fn.clone(),
             )
         };
 

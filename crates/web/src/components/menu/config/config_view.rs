@@ -1,7 +1,10 @@
 use std::rc::Rc;
 
 use super::super::range::range_view::Range;
-use crate::utility::{constants as sim_c, enums::FluidProperty};
+use crate::{
+    utility::{constants as sim_c, enums::FluidProperty},
+    ClearFluidFn,
+};
 use percy_dom::*;
 
 pub struct ConfigComponentData {
@@ -11,6 +14,7 @@ pub struct ConfigComponentData {
     pub density: f32,
     pub diffusion: f32,
     pub set_fluid_property: Rc<dyn Fn(FluidProperty) -> ()>,
+    pub clear_fluid: ClearFluidFn,
 }
 
 pub struct Config {
@@ -34,6 +38,8 @@ impl View for Config {
         let set_density = self.get_property_updater(Rc::new(|val| FluidProperty::Density(val)));
         let set_velocity = self.get_property_updater(Rc::new(|val| FluidProperty::Velocity(val)));
         let set_diffusion = self.get_property_updater(Rc::new(|val| FluidProperty::Diffusion(val)));
+
+        let clear_fluid = self.data.clear_fluid.clone();
 
         let ranges = vec![
             Range {
@@ -85,7 +91,10 @@ impl View for Config {
             <ul class=config_class>
                 { ranges }
                 <li>
-                    <button class=css["config-button"]>Clear</button>
+                    <button onclick=move || {
+                       (clear_fluid)()
+                    }
+                    class=css["config-button"]>Clear</button>
                 </li>
                 <li>
                     <button class=css["config-button"]>Reset</button>

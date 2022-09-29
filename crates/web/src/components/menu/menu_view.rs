@@ -5,6 +5,7 @@ use percy_dom::*;
 use crate::{
     components::menu::config,
     utility::{enums::FluidProperty, structs::ConfigData},
+    ClearFluidFn,
 };
 
 use super::hamburger::hamburger_view::Hamburger;
@@ -15,6 +16,7 @@ pub struct MenuData<'a> {
     pub set_fluid_property: Rc<dyn Fn(FluidProperty) -> ()>,
     pub config_data: &'a ConfigData,
     pub open: bool,
+    pub clear_fluid: ClearFluidFn,
 }
 
 pub struct Menu<'a> {
@@ -37,7 +39,8 @@ impl<'a> View for Menu<'a> {
                             time_step: self.data.config_data.time_step,
                             density: self.data.config_data.density,
                             diffusion: self.data.config_data.diffusion,
-                            set_fluid_property: self.data.set_fluid_property.clone()
+                            set_fluid_property: self.data.set_fluid_property.clone(),
+                            clear_fluid: self.data.clear_fluid.clone()
                         }
                     }
                 />
