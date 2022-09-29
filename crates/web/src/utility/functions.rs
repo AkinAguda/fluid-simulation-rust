@@ -105,11 +105,11 @@ pub fn get_grid_dimensions(width: u32, height: u32) -> (u32, u32) {
     if width > height {
         (
             count as u32,
-            (count as f32 / (width / height) as f32) as u32,
+            (count as f32 / (width as f32 / height as f32) as f32) as u32,
         )
     } else if height > width {
         (
-            (count as f32 / (height / width) as f32) as u32,
+            (count as f32 / (height as f32 / width as f32) as f32) as u32,
             count as u32,
         )
     } else {
@@ -128,9 +128,9 @@ pub fn initialise_canvas(app: SimApp) -> (SimApp, web_sys::HtmlCanvasElement, u3
 
     resize_canvas_to_display_size(&canvas);
 
-    let (v_cells, h_cells) = get_grid_dimensions(canvas.width(), canvas.height());
+    let (h_cells, v_cells) = get_grid_dimensions(canvas.width(), canvas.height());
 
-    (app, canvas, v_cells, h_cells)
+    (app, canvas, h_cells, v_cells)
 }
 
 pub fn wrld_clbk<T>(world: &SimAppWorldWrapper, f: impl FnOnce(SimAppWorldWrapper) -> T) -> T {
