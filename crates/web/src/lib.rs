@@ -103,8 +103,8 @@ impl WebClient {
         let (app2, canvas, nw, nh) = initialise_canvas(app2);
 
         let fluid = Rc::new(RefCell::new(Fluid::new(FluidConfig::new(
-            nw as u16,
-            nh as u16,
+            nw as u16 - 2,
+            nh as u16 - 2,
             DEFAULT_DIFFUSION,
             DEFAULT_TIME_STEP,
         ))));

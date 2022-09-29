@@ -306,9 +306,8 @@ pub fn initialise_webgl(canvas: &web_sys::HtmlCanvasElement, nw: f32, nh: f32) -
 
     // Populating vertices
     let vertices = Float32Array::new_with_length((nw * nh * 2.0) as u32);
-    let densities = RefCell::new(Float32Array::new_with_length(
-        ((nw + 2.0) * (nh + 2.0)) as u32,
-    ));
+    // TODO: Get size from fluid. This function should know nothing about the internal calculation of the fluid's soze
+    let densities = RefCell::new(Float32Array::new_with_length((nw * nh) as u32));
     let mut point_index: u32 = 0;
     const HALF_SQUARE: f32 = 0.5;
 
