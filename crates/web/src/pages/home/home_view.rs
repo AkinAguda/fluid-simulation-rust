@@ -37,15 +37,16 @@ impl View for Home {
         });
 
         let main_heading = "Fluid SImulation";
+        let sub_heading_start = "With the ";
         let sub_heading = "Navier Stokes Equations";
-        let cta_link = "See on Github";
+        let cta_link_text = "See on Github";
 
         html! {
         <div class=css["wrapper"]>
             <div class=css["intro"]>
                 <h1>{main_heading}</h1>
-                <h2>With the <a href="https://en.wikipedia.org/wiki/Navier%E2%80%93Stokes_equations" target="_blank">{sub_heading}</a></h2>
-                <a href="https://github.com/AkinAguda/fluid-simulation-rust" target="_blank">{cta_link}</a>
+                <h2>{sub_heading_start}<a href="https://en.wikipedia.org/wiki/Navier%E2%80%93Stokes_equations" target="_blank">{sub_heading}</a></h2>
+                <a href="https://github.com/AkinAguda/fluid-simulation-rust" target="_blank">{cta_link_text}</a>
             </div>
             <Menu data={
                 MenuData {
