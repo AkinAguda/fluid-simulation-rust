@@ -36,12 +36,16 @@ impl View for Home {
             Rc::new(move || world.msg(Msg::ResetConfig))
         });
 
+        let main_heading = "Fluid SImulation";
+        let sub_heading = "Navier Stokes Equations";
+        let cta_link = "See on Github";
+
         html! {
         <div class=css["wrapper"]>
             <div class=css["intro"]>
-                <h1>{"Fluid SImulation"}</h1>
-                <h2>With the <a href="https://en.wikipedia.org/wiki/Navier%E2%80%93Stokes_equations" target="_blank">{"Navier Stokes Equations"}</a></h2>
-                <a href="https://github.com/AkinAguda/fluid-simulation-rust" target="_blank">{"See on Github"}</a>
+                <h1>{main_heading}</h1>
+                <h2>With the <a href="https://en.wikipedia.org/wiki/Navier%E2%80%93Stokes_equations" target="_blank">{sub_heading}</a></h2>
+                <a href="https://github.com/AkinAguda/fluid-simulation-rust" target="_blank">{cta_link}</a>
             </div>
             <Menu data={
                 MenuData {
