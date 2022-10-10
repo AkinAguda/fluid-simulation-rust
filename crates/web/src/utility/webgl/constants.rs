@@ -57,14 +57,8 @@ pub const FRAGMENT_SHADER_1: &str = r#"
 precision mediump float;
 varying float v_density;
 
-float interpolateToZeroToOne(float start, float end, float value) {{
-  // return (value - start) / (end - start);
-  return value;
-}}
-
 void main() {
-  float range_density = interpolateToZeroToOne(0.0, 20.0, v_density);
-  gl_FragColor = vec4(sin(range_density), sin(range_density) * cos(range_density) * sin(range_density), sin(range_density / 2.0), 1.0);
+  gl_FragColor = vec4(v_density * v_density, v_density * 0.0, v_density * 1.0, 1.0);
 }
 "#;
 
