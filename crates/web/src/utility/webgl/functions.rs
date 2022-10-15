@@ -271,10 +271,6 @@ pub fn initialise_webgl(canvas: &web_sys::HtmlCanvasElement, nw: f32, nh: f32) -
         .get_uniform_location(&rtt_program, "u_resolution")
         .unwrap();
 
-    // let canvas_resolution = context
-    //     .get_uniform_location(&rtc_program, "u_canvasResolution")
-    //     .unwrap();
-
     let canvas_projection_location = context
         .get_uniform_location(&rtc_program, "u_canvasProjection")
         .unwrap();
@@ -299,28 +295,14 @@ pub fn initialise_webgl(canvas: &web_sys::HtmlCanvasElement, nw: f32, nh: f32) -
 
     context.use_program(Some(&rtc_program));
 
-    // context.uniform2f(
-    //     Some(&canvas_resolution),
-    //     canvas.width() as f32,
-    //     canvas.height() as f32,
-    // );
-
     context.uniform2f(Some(&image_resolution), nw, nh);
-
-    // let canvas_to_clipspace_mat = Matrix3::new(
-
-    // );
 
     #[rustfmt::skip]
     let canvas_projection_matrix = vec![
-        (2.0 / canvas.width() as f32), 0.0, -1.0,
-        0.0, -1.0 * (2.0 / canvas.height() as f32), 1.0,
-        0.0, 0.0, 1.0 
+        (2.0 / canvas.width() as f32), 0.0, 0.0,
+        0.0, (-2.0 / canvas.height() as f32), 0.0,
+        -1.0, 1.0, 1.0 
     ];
-
-    let st = format!("{:?}", &canvas_projection_matrix);
-
-    log(&st);
 
     context.uniform_matrix3fv_with_f32_array(
         Some(&canvas_projection_location),
