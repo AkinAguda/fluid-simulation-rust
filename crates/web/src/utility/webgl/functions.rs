@@ -1,9 +1,8 @@
-use std::cell::RefCell;
-
 use super::constants::{FRAGMENT_SHADER_1, FRAGMENT_SHADER_2, VERTEX_SHADER_1, VERTEX_SHADER_2};
 use super::structs::WebGlData;
 use js_sys::Float32Array;
 use percy_dom::JsCast;
+use std::cell::RefCell;
 use wasm_bindgen::prelude::*;
 use web_sys::{WebGlProgram, WebGlRenderingContext as GL, WebGlShader, WebGlTexture};
 
@@ -272,8 +271,12 @@ pub fn initialise_webgl(canvas: &web_sys::HtmlCanvasElement, nw: f32, nh: f32) -
         .get_uniform_location(&rtt_program, "u_resolution")
         .unwrap();
 
-    let canvas_resolution = context
-        .get_uniform_location(&rtc_program, "u_canvasResolution")
+    // let canvas_resolution = context
+    //     .get_uniform_location(&rtc_program, "u_canvasResolution")
+    //     .unwrap();
+
+    let canvas_projection_location = context
+        .get_uniform_location(&rtc_program, "u_canvasProjection")
         .unwrap();
 
     let image_resolution = context
@@ -296,13 +299,34 @@ pub fn initialise_webgl(canvas: &web_sys::HtmlCanvasElement, nw: f32, nh: f32) -
 
     context.use_program(Some(&rtc_program));
 
-    context.uniform2f(
-        Some(&canvas_resolution),
-        canvas.width() as f32,
-        canvas.height() as f32,
-    );
+    // context.uniform2f(
+    //     Some(&canvas_resolution),
+    //     canvas.width() as f32,
+    //     canvas.height() as f32,
+    // );
 
     context.uniform2f(Some(&image_resolution), nw, nh);
+
+    // let canvas_to_clipspace_mat = Matrix3::new(
+
+    // );
+
+    #[rustfmt::skip]
+    let canvas_projection_matrix = vec![
+        (2.0 / canvas.width() as f32), 0.0, -1.0,
+        0.0, -1.0 * (2.0 / canvas.height() as f32), 1.0,
+        0.0, 0.0, 1.0 
+    ];
+
+    let st = format!("{:?}", &canvas_projection_matrix);
+
+    log(&st);
+
+    context.uniform_matrix3fv_with_f32_array(
+        Some(&canvas_projection_location),
+        false,
+        &canvas_projection_matrix,
+    );
 
     // Populating vertices
     let vertices = Float32Array::new_with_length((nw * nh * 2.0) as u32);

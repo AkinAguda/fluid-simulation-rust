@@ -31,8 +31,8 @@ pub const VERTEX_SHADER_2: &str = formatcp!(
     r#"
 attribute vec2 a_pos;
 attribute vec2 a_texCoord;
-uniform vec2 u_canvasResolution;
 uniform vec2 u_imageResolution;
+uniform mat3 u_canvasProjection;
 varying vec2 v_texCoord;
 
 {}
@@ -46,7 +46,8 @@ vec2 convertToTextureClipSpace(vec2 position, vec2 resolution) {{
 }}
 
 void main() {{
-  gl_Position = vec4(convertToClipSpace(a_pos, u_canvasResolution), 0, 1);
+  vec2 position = (u_canvasProjection * vec3(a_pos, 1)).xy;
+  gl_Position = vec4(position, 0, 1);
   v_texCoord = convertToTextureClipSpace(a_texCoord, u_imageResolution);
 }}
 "#,
