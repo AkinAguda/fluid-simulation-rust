@@ -267,16 +267,16 @@ pub fn initialise_webgl(canvas: &web_sys::HtmlCanvasElement, nw: f32, nh: f32) -
 
     let tex_attribute_location = context.get_attrib_location(&rtc_program, "a_texCoord");
 
-    let resolution_uniform_location = context
-        .get_uniform_location(&rtt_program, "u_resolution")
+    let texture_position_projection_location = context
+        .get_uniform_location(&rtt_program, "u_texturePositionProjection")
         .unwrap();
 
     let canvas_projection_location = context
         .get_uniform_location(&rtc_program, "u_canvasProjection")
         .unwrap();
 
-    let image_resolution = context
-        .get_uniform_location(&rtc_program, "u_imageResolution")
+    let image_projection_location = context
+        .get_uniform_location(&rtc_program, "u_imageProjection")
         .unwrap();
 
     let position_buffer = context.create_buffer().unwrap();
@@ -291,11 +291,33 @@ pub fn initialise_webgl(canvas: &web_sys::HtmlCanvasElement, nw: f32, nh: f32) -
 
     context.use_program(Some(&rtt_program));
 
-    context.uniform2f(Some(&resolution_uniform_location), nw, nh);
+    #[rustfmt::skip]
+    let texture_position_projection_matrix = vec![
+        (2.0 / nw as f32), 0.0, 0.0,
+        0.0, (-2.0 / nh as f32), 0.0,
+        -1.0, 1.0, 1.0 
+    ];
+
+    context.uniform_matrix3fv_with_f32_array(
+        Some(&texture_position_projection_location),
+        false,
+        &texture_position_projection_matrix,
+    );
 
     context.use_program(Some(&rtc_program));
 
-    context.uniform2f(Some(&image_resolution), nw, nh);
+    #[rustfmt::skip]
+    let image_projection_matrix = vec![
+        (1.0 / nw as f32), 0.0, 0.0,
+        0.0, (-1.0 / nh as f32), 0.0,
+        0.0, 1.0, 1.0 
+    ];
+
+    context.uniform_matrix3fv_with_f32_array(
+        Some(&image_projection_location),
+        false,
+        &image_projection_matrix,
+    );
 
     #[rustfmt::skip]
     let canvas_projection_matrix = vec![
@@ -312,7 +334,7 @@ pub fn initialise_webgl(canvas: &web_sys::HtmlCanvasElement, nw: f32, nh: f32) -
 
     // Populating vertices
     let vertices = Float32Array::new_with_length((nw * nh * 2.0) as u32);
-    // TODO: Get size from fluid. This function should know nothing about the internal calculation of the fluid's soze
+    // TODO: Get size from fluid. This function should know nothing about the internal calculation of the fluid's size
     let densities = RefCell::new(Float32Array::new_with_length((nw * nh) as u32));
     let mut point_index: u32 = 0;
     const HALF_SQUARE: f32 = 0.5;
