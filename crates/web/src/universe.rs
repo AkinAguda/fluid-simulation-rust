@@ -3,27 +3,15 @@ use crate::{
     state::SimAppState,
     utility::enums::FluidProperty,
 };
-use app_world::{AppWorld, AppWorldWrapper};
+use app_universe::{AppUniverse, AppUniverseCore};
 use wasm_bindgen::prelude::*;
 
-#[wasm_bindgen]
-extern "C" {
-    #[wasm_bindgen(js_namespace = console)]
-    fn log(s: &str);
-
-    #[wasm_bindgen(js_namespace = console, js_name = log)]
-    fn log_u32(a: u32);
-
-    #[wasm_bindgen(js_namespace = console, js_name = log)]
-    fn log_many(a: &str, b: &str);
-}
-
-pub struct World {
+pub struct AppState {
     pub state: SimAppState,
     resources: Resources,
 }
 
-pub type SimAppWorldWrapper = AppWorldWrapper<World>;
+pub type SimAppUniverseWrapper = AppUniverse<AppState>;
 
 pub enum Msg {
     ToggleConfig,
@@ -33,9 +21,9 @@ pub enum Msg {
     ResetConfig,
 }
 
-impl World {
-    pub fn new(render_fn: RenderFn) -> World {
-        World {
+impl AppState {
+    pub fn new(render_fn: RenderFn) -> AppState {
+        AppState {
             state: SimAppState::new(),
             resources: Resources {
                 render_fn,
@@ -54,7 +42,7 @@ impl World {
     }
 }
 
-impl AppWorld for World {
+impl AppUniverseCore for AppState {
     type Message = Msg;
 
     fn msg(&mut self, message: Self::Message) {

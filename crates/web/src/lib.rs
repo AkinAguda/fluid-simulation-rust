@@ -2,9 +2,11 @@ mod components;
 mod pages;
 mod resources;
 mod state;
+mod universe;
 mod utility;
-mod world;
 
+use crate::universe::Msg;
+use crate::universe::{AppState, SimAppUniverseWrapper};
 use crate::utility::constants::{DEFAULT_DIFFUSION, DEFAULT_TIME_STEP};
 use crate::utility::functions::get_event_location;
 use crate::utility::structs::{ConfigData, MouseState};
@@ -12,9 +14,7 @@ use crate::utility::{
     functions::{get_multipliers, initialise_canvas},
     webgl::initialise_webgl,
 };
-use crate::world::Msg;
-use crate::world::{SimAppWorldWrapper, World};
-use app_world::AppWorldWrapper;
+use app_universe::create_universe;
 use fluid_sim::{Fluid, FluidConfig};
 use pages::home::home_view::Home;
 use percy_dom::prelude::*;
@@ -27,7 +27,7 @@ use wasm_bindgen::prelude::*;
 
 #[derive(Clone)]
 pub struct SimApp {
-    world: SimAppWorldWrapper,
+    universe: SimAppUniverseWrapper,
 }
 
 #[wasm_bindgen]
@@ -63,7 +63,7 @@ fn render_app_with_world(
 ) -> VirtualNode {
     let app_2 = app.clone();
     Home {
-        world: app_2.world.clone(),
+        world: app_2.universe.clone(),
         mouse_state,
         add_properties_from_mouse_loc,
         clear_fluid,
@@ -73,7 +73,7 @@ fn render_app_with_world(
 
 fn create_app(render: RenderFn) -> SimApp {
     SimApp {
-        world: AppWorldWrapper::new(World::new(render)),
+        universe: create_universe(AppState::new(render)),
     }
 }
 
@@ -119,7 +119,7 @@ impl WebClient {
         let fluid_ref_3 = fluid.clone();
         let fluid_ref_4 = fluid.clone();
 
-        app2.world
+        app2.universe
             .msg(Msg::SetFluidPropertySetters(FluidProperySetters {
                 time_step: Box::new(move |val: f32| {
                     fluid_ref_1.borrow_mut().set_dt(val);
@@ -136,7 +136,7 @@ impl WebClient {
         let add_properties_from_mouse_loc = Rc::new(move |client_values: (f64, f64)| {
             let ConfigData {
                 velocity, density, ..
-            } = app_ref_3.world.read().state.config_data;
+            } = app_ref_3.universe.read().state.config_data;
 
             let coords = get_event_location(
                 nw as f64,
@@ -185,7 +185,7 @@ impl WebClient {
 
         let render = create_render_scheduler(pdom, render);
 
-        app2.world.msg(Msg::SetRenderFn(render));
+        app2.universe.msg(Msg::SetRenderFn(render));
 
         start_animation_loop(webgl_data, fluid.clone());
 

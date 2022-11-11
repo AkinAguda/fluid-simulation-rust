@@ -1,8 +1,8 @@
 use super::structs::RenderLoop;
 use super::webgl::render_fluid;
 use super::webgl::structs::WebGlData;
+use crate::universe::SimAppUniverseWrapper;
 use crate::utility::constants::CANVAS_ID;
-use crate::world::SimAppWorldWrapper;
 use crate::SimApp;
 use fluid_sim::Fluid;
 use num_traits::ToPrimitive;
@@ -133,7 +133,10 @@ pub fn initialise_canvas(app: SimApp) -> (SimApp, web_sys::HtmlCanvasElement, u3
     (app, canvas, h_cells, v_cells)
 }
 
-pub fn wrld_clbk<T>(world: &SimAppWorldWrapper, f: impl FnOnce(SimAppWorldWrapper) -> T) -> T {
+pub fn wrld_clbk<T>(
+    world: &SimAppUniverseWrapper,
+    f: impl FnOnce(SimAppUniverseWrapper) -> T,
+) -> T {
     let world_clone = world.clone();
     (f)(world_clone)
 }

@@ -3,17 +3,17 @@ use std::rc::Rc;
 
 use crate::{
     components::{canvas::canvas_view::CanvasData, menu::menu_view::MenuData, *},
+    universe::SimAppUniverseWrapper,
     utility::{enums::FluidProperty, functions::wrld_clbk},
-    world::SimAppWorldWrapper,
     AddPropertiesFn, ClearFluidFn, MouseStateRef,
 };
 
-use crate::world::Msg;
+use crate::universe::Msg;
 use canvas::canvas_view::Canvas;
 use menu::menu_view::Menu;
 
 pub struct Home {
-    pub world: SimAppWorldWrapper,
+    pub world: SimAppUniverseWrapper,
     pub mouse_state: MouseStateRef,
     pub add_properties_from_mouse_loc: AddPropertiesFn,
     pub clear_fluid: ClearFluidFn,
