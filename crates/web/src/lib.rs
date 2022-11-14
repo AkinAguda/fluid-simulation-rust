@@ -20,15 +20,9 @@ use pages::home::home_view::Home;
 use percy_dom::prelude::*;
 use percy_dom::{render::create_render_scheduler, VirtualNode};
 use resources::FluidProperySetters;
-use resources::RenderFn;
 use std::{cell::RefCell, rc::Rc};
 use utility::functions::start_animation_loop;
 use wasm_bindgen::prelude::*;
-
-#[derive(Clone)]
-pub struct SimApp {
-    universe: SimAppUniverseWrapper,
-}
 
 #[wasm_bindgen]
 pub struct WebClient {}
@@ -55,26 +49,19 @@ fn create_dom_updater() -> PercyDom {
     pdom
 }
 
-fn render_app_with_world(
-    app: &SimApp,
+fn render_app_with_universe(
+    universe: SimAppUniverseWrapper,
     mouse_state: MouseStateRef,
     add_properties_from_mouse_loc: AddPropertiesFn,
     clear_fluid: ClearFluidFn,
 ) -> VirtualNode {
-    let app_2 = app.clone();
     Home {
-        world: app_2.universe.clone(),
+        universe: universe,
         mouse_state,
         add_properties_from_mouse_loc,
         clear_fluid,
     }
     .render()
-}
-
-fn create_app(render: RenderFn) -> SimApp {
-    SimApp {
-        universe: create_universe(AppState::new(render)),
-    }
 }
 
 pub type MouseStateRef = Rc<RefCell<MouseState>>;
@@ -90,22 +77,21 @@ impl WebClient {
         console_error_panic_hook::set_once();
         css_mod::init!();
 
-        let render = Box::new(|| {});
-        let app: SimApp = create_app(render);
+        let app = create_universe(AppState::new());
         let app2 = app.clone();
         let app_ref_3 = app.clone();
         let mut pdom = create_dom_updater();
 
         let mouse_state: MouseStateRef = Rc::new(RefCell::new(MouseState::default()));
 
-        pdom.update(render_app_with_world(
-            &app,
+        pdom.update(render_app_with_universe(
+            app.clone(),
             mouse_state.clone(),
             Rc::new(|_: (f64, f64)| {}),
             Rc::new(|| {}),
         ));
 
-        let (app2, canvas, nw, nh) = initialise_canvas(app2);
+        let (mut app2, canvas, nw, nh) = initialise_canvas(app2);
 
         let fluid = Rc::new(RefCell::new(Fluid::new(FluidConfig::new(
             nw as u16 - 2,
@@ -119,15 +105,14 @@ impl WebClient {
         let fluid_ref_3 = fluid.clone();
         let fluid_ref_4 = fluid.clone();
 
-        app2.universe
-            .msg(Msg::SetFluidPropertySetters(FluidProperySetters {
-                time_step: Box::new(move |val: f32| {
-                    fluid_ref_1.borrow_mut().set_dt(val);
-                }),
-                diffusion: Box::new(move |val: f32| {
-                    fluid_ref_2.borrow_mut().set_diffusion(val);
-                }),
-            }));
+        app2.msg(Msg::SetFluidPropertySetters(FluidProperySetters {
+            time_step: Box::new(move |val: f32| {
+                fluid_ref_1.borrow_mut().set_dt(val);
+            }),
+            diffusion: Box::new(move |val: f32| {
+                fluid_ref_2.borrow_mut().set_diffusion(val);
+            }),
+        }));
 
         let mouse_state_ref = mouse_state.clone();
         let canvas_dom_rect = canvas.get_bounding_client_rect();
@@ -136,7 +121,7 @@ impl WebClient {
         let add_properties_from_mouse_loc = Rc::new(move |client_values: (f64, f64)| {
             let ConfigData {
                 velocity, density, ..
-            } = app_ref_3.universe.read().state.config_data;
+            } = app_ref_3.read().state.config_data;
 
             let coords = get_event_location(
                 nw as f64,
@@ -175,17 +160,19 @@ impl WebClient {
         let clear_fn = Rc::new(move || fluid_ref_4.borrow_mut().clear());
 
         let render = move || {
-            render_app_with_world(
-                &app,
+            render_app_with_universe(
+                app.clone(),
                 mouse_state.clone(),
                 add_properties_from_mouse_loc.clone(),
                 clear_fn.clone(),
             )
         };
 
-        let render = create_render_scheduler(pdom, render);
+        let mut render = create_render_scheduler(pdom, render);
 
-        app2.universe.msg(Msg::SetRenderFn(render));
+        app2.subscribe(Box::new(move |_universe| {
+            (render)();
+        }));
 
         start_animation_loop(webgl_data, fluid.clone());
 

@@ -1,10 +1,9 @@
 use crate::{
-    resources::{FluidProperySetters, RenderFn, Resources},
+    resources::{FluidProperySetters, Resources},
     state::SimAppState,
     utility::enums::FluidProperty,
 };
 use app_universe::{AppUniverse, AppUniverseCore};
-use wasm_bindgen::prelude::*;
 
 pub struct AppState {
     pub state: SimAppState,
@@ -15,18 +14,16 @@ pub type SimAppUniverseWrapper = AppUniverse<AppState>;
 
 pub enum Msg {
     ToggleConfig,
-    SetRenderFn(RenderFn),
     SetFluidProperty(FluidProperty),
     SetFluidPropertySetters(FluidProperySetters),
     ResetConfig,
 }
 
 impl AppState {
-    pub fn new(render_fn: RenderFn) -> AppState {
+    pub fn new() -> AppState {
         AppState {
             state: SimAppState::new(),
             resources: Resources {
-                render_fn,
                 fluid_propery_setters: FluidProperySetters {
                     diffusion: Box::new(|_val: f32| {}),
                     time_step: Box::new(|_val: f32| {}),
@@ -34,9 +31,7 @@ impl AppState {
             },
         }
     }
-    pub fn set_render_fn(&mut self, render_fn: RenderFn) {
-        self.resources.set_render_fn(render_fn);
-    }
+
     pub fn toggle_config(&mut self) {
         self.state.set_config_open(!self.state.config_open);
     }
@@ -49,10 +44,6 @@ impl AppUniverseCore for AppState {
         match message {
             Msg::ToggleConfig => {
                 self.toggle_config();
-            }
-
-            Msg::SetRenderFn(render_fn) => {
-                self.set_render_fn(render_fn);
             }
 
             Msg::SetFluidProperty(fluid_prop) => match fluid_prop {
@@ -81,6 +72,5 @@ impl AppUniverseCore for AppState {
                 self.state.config_data.reset();
             }
         }
-        (self.resources.render_fn)();
     }
 }

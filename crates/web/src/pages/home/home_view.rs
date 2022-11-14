@@ -13,7 +13,7 @@ use canvas::canvas_view::Canvas;
 use menu::menu_view::Menu;
 
 pub struct Home {
-    pub world: SimAppUniverseWrapper,
+    pub universe: SimAppUniverseWrapper,
     pub mouse_state: MouseStateRef,
     pub add_properties_from_mouse_loc: AddPropertiesFn,
     pub clear_fluid: ClearFluidFn,
@@ -21,19 +21,19 @@ pub struct Home {
 
 impl View for Home {
     fn render(&self) -> VirtualNode {
-        let open = self.world.read().state.config_open.clone();
+        let open = self.universe.read().state.config_open.clone();
         let css = css_mod::get!("home.css");
 
-        let toggle_config = wrld_clbk(&self.world, |world| {
-            Rc::new(move || world.msg(Msg::ToggleConfig))
+        let toggle_config = wrld_clbk(&self.universe, |universe| {
+            Rc::new(move || universe.msg(Msg::ToggleConfig))
         });
 
-        let set_fluid_property = wrld_clbk(&self.world, |world| {
-            Rc::new(move |property: FluidProperty| world.msg(Msg::SetFluidProperty(property)))
+        let set_fluid_property = wrld_clbk(&self.universe, |universe| {
+            Rc::new(move |property: FluidProperty| universe.msg(Msg::SetFluidProperty(property)))
         });
 
-        let reset_config = wrld_clbk(&self.world, |world| {
-            Rc::new(move || world.msg(Msg::ResetConfig))
+        let reset_config = wrld_clbk(&self.universe, |universe| {
+            Rc::new(move || universe.msg(Msg::ResetConfig))
         });
 
         let main_heading = "Fluid SImulation";
@@ -53,7 +53,7 @@ impl View for Home {
                     open: open,
                     toggle_config,
                     set_fluid_property,
-                    config_data: &self.world.read().state.config_data,
+                    config_data: &self.universe.read().state.config_data,
                     clear_fluid: self.clear_fluid.clone(),
                     reset_config: reset_config
                 }

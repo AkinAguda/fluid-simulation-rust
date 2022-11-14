@@ -3,7 +3,6 @@ use super::webgl::render_fluid;
 use super::webgl::structs::WebGlData;
 use crate::universe::SimAppUniverseWrapper;
 use crate::utility::constants::CANVAS_ID;
-use crate::SimApp;
 use fluid_sim::Fluid;
 use num_traits::ToPrimitive;
 use percy_dom::JsCast;
@@ -117,7 +116,9 @@ pub fn get_grid_dimensions(width: u32, height: u32) -> (u32, u32) {
     }
 }
 
-pub fn initialise_canvas(app: SimApp) -> (SimApp, web_sys::HtmlCanvasElement, u32, u32) {
+pub fn initialise_canvas(
+    app: SimAppUniverseWrapper,
+) -> (SimAppUniverseWrapper, web_sys::HtmlCanvasElement, u32, u32) {
     let window = web_sys::window().unwrap();
     let document = window.document().unwrap();
     let canvas = document
