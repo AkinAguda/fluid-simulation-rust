@@ -14,7 +14,7 @@ use crate::utility::{
     functions::{get_multipliers, initialise_canvas},
     webgl::initialise_webgl,
 };
-use app_universe::create_universe;
+use app_universe::AppUniverse;
 use fluid_sim::{Fluid, FluidConfig};
 use pages::home::home_view::Home;
 use percy_dom::prelude::*;
@@ -77,7 +77,7 @@ impl WebClient {
         console_error_panic_hook::set_once();
         css_mod::init!();
 
-        let app = create_universe(AppState::new());
+        let app = AppUniverse::new(AppState::new());
         let app2 = app.clone();
         let app_ref_3 = app.clone();
         let mut pdom = create_dom_updater();
@@ -169,6 +169,8 @@ impl WebClient {
         };
 
         let mut render = create_render_scheduler(pdom, render);
+
+        render();
 
         app2.subscribe(Box::new(move |_universe| {
             (render)();
