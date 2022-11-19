@@ -2,7 +2,7 @@
 
 echo -e "\e[1;33m BUILDING... Installing and setting up cargo \e[0m" &&
 
-curl https://sh.rustup.rs -sSf | sh -s -- --default-toolchain -y none &&
+curl https://sh.rustup.rs -sSf | sh -s -- -y --default-toolchain stable &&
 
 echo -e "\e[1;32m BUILDING... Cargo Installed sucessfully \e[0m" &&
 
