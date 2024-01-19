@@ -105,7 +105,7 @@ impl View for Canvas {
                     (touchmove)(event);
                 }
             >
-            /canvas>
+            </canvas>
         }
     }
 }
