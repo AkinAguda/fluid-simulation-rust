@@ -28,10 +28,13 @@ pub const VERTEX_SHADER_2: &str = r#"
 
 pub const FRAGMENT_SHADER_1: &str = r#"
   precision mediump float;
+  
+  uniform vec2 u_resolution;
   varying float v_density;
 
   void main() {
-    gl_FragColor = vec4(v_density * v_density, v_density * 0.0, v_density * 1.0, 1.0);
+    vec2 uv = gl_FragCoord.xy / u_resolution;
+    gl_FragColor = vec4(v_density * uv.x, v_density * uv.y, v_density, 1.0);
   }
 "#;
 

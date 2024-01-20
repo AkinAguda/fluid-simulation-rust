@@ -279,6 +279,10 @@ pub fn initialise_webgl(canvas: &web_sys::HtmlCanvasElement, nw: f32, nh: f32) -
         .get_uniform_location(&rtc_program, "u_imageProjection")
         .unwrap();
 
+    let resolution_uniform_location = context
+        .get_uniform_location(&rtt_program, "u_resolution")
+        .unwrap();
+
     let position_buffer = context.create_buffer().unwrap();
 
     let density_buffer = context.create_buffer().unwrap();
@@ -302,6 +306,11 @@ pub fn initialise_webgl(canvas: &web_sys::HtmlCanvasElement, nw: f32, nh: f32) -
         Some(&texture_position_projection_location),
         false,
         &texture_position_projection_matrix,
+    );
+
+    context.uniform2fv_with_f32_array(
+        Some(&resolution_uniform_location),
+        &vec![nw as f32, nh as f32],
     );
 
     context.use_program(Some(&rtc_program));
